@@ -9,7 +9,7 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 
 # path and name to the fasta file of the reference genome
 # if not set, the reference genome will be downloaded from NCBI (NC_045512.2)
-ref: ""
+ref: "data/"
 
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
 results: "results"

@@ -1,0 +1,7 @@
+name: primer_clipping
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bamclipper=1.0.0

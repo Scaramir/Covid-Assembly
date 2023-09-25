@@ -58,13 +58,18 @@ def dir_to_sample_df(dir: Path, pairwise: bool) -> pd.DataFrame:
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
 include: os.path.join("rules", "mapping.smk")
+include: os.path.join("rules", "primer_clipping.smk")
 include: os.path.join("rules", "variant_calling.smk")
 
 # Rule all
 rule all:
     input: 
         #"output/qc/clean_reads.R1.fastq.gz"
-        "output/qc/nanoplot/raw/NanoPlot-report.html"
+        #"output/qc/nanoplot/raw/NanoPlot-report.html"
+        #"output/qc/clean_reads_nanopore.fastq.gz"
+        #"output/mapping/minimap2-illumina.sam"
+        #"output/mapping/minimap2-nanopore.sam"
+        "output/mapping/{sample}.sorted.bam"
 
         
         # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],
