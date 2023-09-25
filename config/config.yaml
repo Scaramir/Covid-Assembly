@@ -1,13 +1,14 @@
 # Use this file to set your paths and parameters.
 # ------ General Paths ------
 # Set the paths to files you want to use here, or leave them empty:
-# path to illumina fastq samples
+# path to the folder containing illumina fastq samples
 illumina_samples: "data/sc2-nanopore-illumina-reads/illumina"
 
-# path to nanopore fastq samples
+# path to the folder containing nanopore fastq samples
 nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 
-# path to fasta file with the reference genome
+# path and name to the fasta file of the reference genome
+# if not set, the reference genome will be downloaded from NCBI (NC_045512.2)
 ref: ""
 
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
@@ -25,7 +26,7 @@ run_phylogenetic_comparison: True
 # Set this to true to get debug information:
 verbose: True
 
-# Set this to the max. number of threads you want to use:
+# Set this to the max. number of threads you want to use for a job:
 threads: 8
 
 # --- De Novo Assembly ---
@@ -48,7 +49,6 @@ database: "data/kraken_database"
 spades_isolate: True
 
 # set this to `true` of `false` to enable or disable the polishing step
-# doPolishing: true
 run_Polishing: False
 
 # --- Calculate Consensus ---

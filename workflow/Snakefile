@@ -1,30 +1,32 @@
 ## Imports:
 import pandas as pd
 import os
+from pathlib import Path
 
-configfile: os.path.join("config", "config.yaml")
+# chekc if param --config-file is set and overwrite configfile
+configfile: "config/config.yaml"
+if snakemake.params.config_file != None:
+    configfile = snakemake.params.config_file
 
 # Check if verbose is set
 verbose = config["verbose"]
 
-# load result dir
-results_dir = config["results"]
+illumina_samples = Path(config["illumina_samples"])
 
+nanopore_sampels = Path(config["nanopore_samples"])
+
+if not (illumina_samples.is_dir() or nanopore_sampels.is_dir()):
+    raise IOError("Illumina and Nanopore samples directory does not exist! \
+                Make sure, one of the folders configures in the `cconfig.yaml` \
+                file exists and contains samples!")
+
+# load result dir
+results_dir = Path(config["results"])
 if results_dir == "" or results_dir == None:
     if verbose:
-        print("== Result dir not set in config - will be set to default path ./results!")
-    results_dir = "results"
-
-# Check if --config-file is set
-if config is not None:
-    # Use default configuration defined in the Snakefile
-    if verbose:
-        print("== Default path for config file will be used.")
-    # check if config file exists at default path
-    if not os.path.exists(os.path.join("config", "config.yaml")):
-        raise IOError("Config file {} does not exist!".format(os.path.join("config", "config.yaml"))) 
-    else:
-        configfile: os.path.join("config", "config.yaml")
+        print("== Result dir not set in config - will be set to default path `./results`!")
+    results_dir = Path("./results")
+results.mkdir(parents=True, exist_ok=True)
 
 ## Initalize all possible path with true
 run_decontamination = True
