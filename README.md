@@ -24,7 +24,8 @@ mkdir data
 
 # Illumina and nanopore data
 wget --no-check-certificate https://osf.io/yz4ad/download -O data/sc2-nanopore-illumina-reads.tar.gz
-tar -xzvf data/sc2-nanopore-illumina-reads.tar.gz
+tar -xzvf data/sc2-nanopore-illumina-reads.tar.gz -C data/
+
 
 
 ```
