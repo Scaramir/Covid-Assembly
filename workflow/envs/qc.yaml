@@ -1,0 +1,11 @@
+name: qc
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - fastqc=0.12.1
+  - fastp=0.23.4
+  - nanoplot=1.41.6
+  - filtlong=0.2.1
+  
