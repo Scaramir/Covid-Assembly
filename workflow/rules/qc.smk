@@ -1,6 +1,7 @@
 # FASTQ Quality Control for Illumina and Nanopore
 
 # Rule for FastQC on Illumina samples
+# TODO: Does not work
 rule fastqc_illumina:
     input:
         R1 = config["illumina_samples"] + "/illumina.R1.fastq.gz",
@@ -25,15 +26,15 @@ rule fastp_illumina:
         R2 = config["illumina_samples"] + "/illumina.R2.fastq.gz"
     output:
         R1 = "output/qc/clean_reads.R1.fastq.gz",
-        R2 = "output/qc/clean_reads.R2.fastq.gz"
+        R2 = "output/qc/clean_reads.R2.fastq.gz",
+        html = "output/qc/fastp.html"
     log:
         "results/log/qc/illumina_fastp.log"
     conda:
         "../envs/qc.yaml"
     shell:
         """
-        fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
-        fastqc -t 2 {output.R1} {output.R2} -o output/qc 2>> {log}
+        fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} -h output/qc/fastp.html --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
         """
 
 # Rule for NanoPlot on Nanopore samples
