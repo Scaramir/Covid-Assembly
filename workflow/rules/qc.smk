@@ -3,8 +3,8 @@
 # Rule for FastQC on Illumina samples
 rule fastqc_illumina:
     input:
-        R1 = config["illumina"]["R1"],
-        R2 = config["illumina"]["R2"]
+        R1 = config["illumina_samples"] + "/illumina.R1.fastq.gz",
+        R2 = config["illumina_samples"] + "/illumina.R2.fastq.gz"
     output:
         html1 = "output/qc/illumina_R1_fastqc.html",
         html2 = "output/qc/illumina_R2_fastqc.html"
@@ -21,8 +21,8 @@ rule fastqc_illumina:
 # Rule for quality trimming with fastp on Illumina samples
 rule fastp_illumina:
     input:
-        R1 = config["illumina"]["R1"],
-        R2 = config["illumina"]["R2"]
+        R1 = config["illumina_samples"] + "/illumina.R1.fastq.gz",
+        R2 = config["illumina_samples"] + "/illumina.R2.fastq.gz"
     output:
         R1 = "output/qc/clean_reads.R1.fastq.gz",
         R2 = "output/qc/clean_reads.R2.fastq.gz"
@@ -39,7 +39,7 @@ rule fastp_illumina:
 # Rule for NanoPlot on Nanopore samples
 rule nanoplot_nanopore:
     input:
-        fastq = "SARSCoV2-nanopore.fastq.gz"
+        fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
         html = "output/qc/nanoplot/raw_summary.html"
     log:
@@ -54,7 +54,7 @@ rule nanoplot_nanopore:
 # Rule for length filtering with Filtlong on Nanopore samples
 rule filtlong_nanopore:
     input:
-        fastq = "SARSCoV2-nanopore.fastq.gz"
+        fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
         fastq = "output/qc/clean_reads_nanopore.fastq.gz"
     log:

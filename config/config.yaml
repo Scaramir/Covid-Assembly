@@ -2,16 +2,9 @@
 # ------ General Paths ------
 # Set the paths to files you want to use here, or leave them empty:
 # path to the folder containing illumina fastq samples
-illumina:
-  R1: "path/to/SARSCoV2-illumina.R1.fastq.gz"
-  R2: "path/to/SARSCoV2-illumina.R2.fastq.gz"
-
 illumina_samples: "data/sc2-nanopore-illumina-reads/illumina"
 
 # path to the folder containing nanopore fastq samples
-nanopore:
-  fastq: "path/to/SARSCoV2-nanopore.fastq.gz"
-  
 nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 
 # path and name to the fasta file of the reference genome
