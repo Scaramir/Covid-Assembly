@@ -27,7 +27,7 @@ wget --no-check-certificate https://osf.io/yz4ad/download -O data/sc2-nanopore-i
 tar -xzvf data/sc2-nanopore-illumina-reads.tar.gz -C data/
 
 # Reference data
-wget --no-check-certificate https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2?report=fasta -O reference.fasta.gz
+wget --no-check-certificate https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2?report=fasta -O reference.fasta
 
 
 
