@@ -3,8 +3,9 @@ import os
 import pandas as pd
 from pathlib import Path
 
-# check if param --config-file is set and overwrite default configfile to use another cofing
-configfile: "../config/config.yaml" if not snakemake.config["configfile"] else snakemake.config["configfile"]
+# check if param --config-file is set 
+configfile: "config/config.yaml" 
+
 # Check if verbose is set
 verbose = config["verbose"]
 
@@ -23,10 +24,10 @@ if results_dir == "" or results_dir == None:
     if verbose:
         print("== Result dir not set in config - will be set to default path `./results`!")
     results_dir = Path("./results")
-results.mkdir(parents=True, exist_ok=True)
+results_dir.mkdir(parents=True, exist_ok=True)
 
 if verbose: 
-    print("== Using config file: {}".format(configfile))
+    print("== Using config file: {}".format(configfile)) 
 
 envs_dir = Path(config["envs_dir"])
 if envs_dir == "" or envs_dir == None:
