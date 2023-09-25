@@ -11,6 +11,7 @@ if snakemake.params.config_file != None:
 # Check if verbose is set
 verbose = config["verbose"]
 
+# Check for all paths in config file if they are set or exist and set them to default if not
 illumina_samples = Path(config["illumina_samples"])
 
 nanopore_sampels = Path(config["nanopore_samples"])
@@ -20,7 +21,6 @@ if not (illumina_samples.is_dir() or nanopore_sampels.is_dir()):
                 Make sure, one of the folders configures in the `cconfig.yaml` \
                 file exists and contains samples!")
 
-# load result dir
 results_dir = Path(config["results"])
 if results_dir == "" or results_dir == None:
     if verbose:
@@ -28,48 +28,29 @@ if results_dir == "" or results_dir == None:
     results_dir = Path("./results")
 results.mkdir(parents=True, exist_ok=True)
 
-## Initalize all possible path with true
-run_decontamination = True
-run_qc_wgs = True
-run_assembly = True
-run_qc_mapping = True
-run_dge_analysis = True
-run_phylogenetic_comparison = True
+if verbose: 
+    print("== Using config file: {}".format(configfile))
 
-include: os.path.join("scripts", "loadData.py")
-include: os.path.join("scripts", "loadParamter.py")
+envs_dir = Path(config["envs_dir"])
+if envs_dir == "" or envs_dir == None:
+    if verbose:
+        print("== Env dir not set in config - will be set to default path `../envs`!")
+    envs_dir = Path("../envs")
 
 # Define subdirectories
-benchmark_dir = os.path.join(results_dir, "benchmark")
-log_dir = os.path.join(results_dir, "logs")
-envs_dir  = os.path.join("..", "envs")
+benchmark_dir = Path(results_dir / "benchmark")
+benchmark_dir.mkdir(parents=True, exist_ok=True)
+log_dir = Path(results_dir / "logs")
+log_dir.mkdir(parents=True, exist_ok=True)
+
 
 # Include rule files:
-include: os.path.join("rules", "annotation.smk")
-include: os.path.join("rules", "assembly.smk")
-include: os.path.join("rules", "decontamination.smk")
-include: os.path.join("rules", "dgeAnalysis.smk")
-include: os.path.join("rules", "mapping.smk")
-include: os.path.join("rules", "msa.smk")
-include: os.path.join("rules", "phylogenie.smk")
-include: os.path.join("rules", "qcAssembly.smk")
-include: os.path.join("rules", "qcMapping.smk")
-include: os.path.join("rules", "qcRNA_seq.smk")
 include: os.path.join("rules", "screen.smk")
+include: os.path.join("rules", "qc.smk")
+include: os.path.join("rules", "mapping.smk")
+include: os.path.join("rules", "variant_calling.smk")
 
-if verbose:
-    # print configuration
-    print("== Configuration:")
-    print("== run_screen: {}".format(run_screen))
-    print("== run_decontamination: {}".format(run_decontamination))
-    print("== run_qc_wgs: {}".format(run_qc_wgs))
-    print("== run_assembly: {}".format(run_assembly))
-    print("== run_qc_rna_seq: {}".format(run_qc_rna_seq))
-    print("== run_qc_mapping: {}".format(run_qc_mapping))
-    print("== run_dge_analysis: {}".format(run_dge_analysis))
-    print("== run_phylogenetic_comparison: {}".format(run_phylogenetic_comparison))
-    print("== doPolishing: {}".format(doPolishing))
-    print("== Results dir: {}".format(results_dir))
+
 
 # define inputs
 if doPolishing:

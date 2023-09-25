@@ -14,6 +14,9 @@ ref: ""
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
 results: "results"
 
+# path to the folder containing the environment set up files
+envs: "../envs"
+
 # ------ Parameters ----------
 # Set the parameters for the pipeline here:
 run_decontamination: False
