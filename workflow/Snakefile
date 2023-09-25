@@ -41,19 +41,19 @@ log_dir.mkdir(parents=True, exist_ok=True)
 
 
 # Load illumina samples by scanning the directory for fastq files and use the sample name as index column and the file path as calues in the dataframe, differentiationg between R1 and R2
-def dir_to_sample_df(dir: Path, pairwise: bool) -> pd.DataFrame:
-    list_of_files: List[Path] = [f for f in dir.glob("*.fastq.gz") if f.is_file()]
-    sample_df: pd.DataFrame = pd.DataFrame()
-    sample_df["sample"] = [f.stem.split(".")[0] for f in list_of_files]
-    if pairwise:
-        sample_df["R1"] = [str(f) for f in list_of_files if ".R1." in str(f)]
-        sample_df["R2"] = [str(f) for f in list_of_files if ".R2." in str(f)]
-    else:
-        sample_df["R1"] = [str(f) for f in list_of_files]
-    return sample_df.set_index("sample")
+# def dir_to_sample_df(dir: Path, pairwise: bool) -> pd.DataFrame:
+#     list_of_files: List[Path] = [f for f in dir.glob("*.fastq.gz") if f.is_file()]
+#     sample_df: pd.DataFrame = pd.DataFrame()
+#     sample_df["sample"] = [f.stem.split(".")[0] for f in list_of_files]
+#     if pairwise:
+#         sample_df["R1"] = [str(f) for f in list_of_files if ".R1." in str(f)]
+#         sample_df["R2"] = [str(f) for f in list_of_files if ".R2." in str(f)]
+#     else:
+#         sample_df["R1"] = [str(f) for f in list_of_files]
+#     return sample_df.set_index("sample")
 
-illumina_samples_df = dir_to_sample_df(illumina_samples, pairwise=True)
-nanopore_samples_df = dir_to_sample_df(nanopore_sampels, pairwise=False)
+# illumina_samples_df = dir_to_sample_df(illumina_samples, pairwise=True)
+# nanopore_samples_df = dir_to_sample_df(nanopore_sampels, pairwise=False)
 
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
@@ -63,7 +63,8 @@ include: os.path.join("rules", "variant_calling.smk")
 # Rule all
 rule all:
     input: 
-        "output/qc/clean_reads.R1.fastq.gz"
+        #"output/qc/clean_reads.R1.fastq.gz"
+        "output/qc/nanoplot/raw/NanoPlot-report.html"
 
         
         # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],

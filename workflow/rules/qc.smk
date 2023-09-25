@@ -42,7 +42,7 @@ rule nanoplot_nanopore:
     input:
         fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
-        html = "output/qc/nanoplot/raw_summary.html"
+        html = "output/qc/nanoplot/raw/NanoPlot-report.html"
     log:
         "results/log/qc/nanoplot.log"
     conda:
