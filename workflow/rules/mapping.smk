@@ -1,7 +1,7 @@
 # Rule for mapping Illumina samples with minimap2
 rule minimap2_illumina:
     input:
-        ref = config["reference_genome"],
+        ref = config["ref"],
         R1 = "output/qc/clean_reads.R1.fastq.gz",
         R2 = "output/qc/clean_reads.R2.fastq.gz"
     output:
@@ -18,7 +18,7 @@ rule minimap2_illumina:
 # Rule for mapping Nanopore samples with minimap2
 rule minimap2_nanopore:
     input:
-        ref = config["reference_genome"],
+        ref = config["ref"],
         fastq = "output/qc/clean_reads_nanopore.fastq.gz"
     output:
         "output/mapping/minimap2-nanopore.sam"

@@ -26,9 +26,6 @@ if results_dir == "" or results_dir == None:
     results_dir = Path("./results")
 results_dir.mkdir(parents=True, exist_ok=True)
 
-if verbose: 
-    print("== Using config file: {}".format(configfile)) 
-
 envs_dir = Path(config["envs_dir"])
 if envs_dir == "" or envs_dir == None:
     if verbose:
@@ -52,7 +49,6 @@ def dir_to_sample_df(dir, pairwise):
 
 
 # Include rule files:
-include: os.path.join("rules", "screen.smk")
 include: os.path.join("rules", "qc.smk")
 include: os.path.join("rules", "mapping.smk")
 include: os.path.join("rules", "variant_calling.smk")
