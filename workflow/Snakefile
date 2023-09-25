@@ -1,0 +1,92 @@
+## Imports:
+import pandas as pd
+import os
+
+configfile: os.path.join("config", "config.yaml")
+
+# Check if verbose is set
+verbose = config["verbose"]
+
+# load result dir
+results_dir = config["results"]
+
+if results_dir == "" or results_dir == None:
+    if verbose:
+        print("== Result dir not set in config - will be set to default path ./results!")
+    results_dir = "results"
+
+# Check if --config-file is set
+if config is not None:
+    # Use default configuration defined in the Snakefile
+    if verbose:
+        print("== Default path for config file will be used.")
+    # check if config file exists at default path
+    if not os.path.exists(os.path.join("config", "config.yaml")):
+        raise IOError("Config file {} does not exist!".format(os.path.join("config", "config.yaml"))) 
+    else:
+        configfile: os.path.join("config", "config.yaml")
+
+## Initalize all possible path with true
+run_decontamination = True
+run_qc_wgs = True
+run_assembly = True
+run_qc_mapping = True
+run_dge_analysis = True
+run_phylogenetic_comparison = True
+
+include: os.path.join("scripts", "loadData.py")
+include: os.path.join("scripts", "loadParamter.py")
+
+# Define subdirectories
+benchmark_dir = os.path.join(results_dir, "benchmark")
+log_dir = os.path.join(results_dir, "logs")
+envs_dir  = os.path.join("..", "envs")
+
+# Include rule files:
+include: os.path.join("rules", "annotation.smk")
+include: os.path.join("rules", "assembly.smk")
+include: os.path.join("rules", "decontamination.smk")
+include: os.path.join("rules", "dgeAnalysis.smk")
+include: os.path.join("rules", "mapping.smk")
+include: os.path.join("rules", "msa.smk")
+include: os.path.join("rules", "phylogenie.smk")
+include: os.path.join("rules", "qcAssembly.smk")
+include: os.path.join("rules", "qcMapping.smk")
+include: os.path.join("rules", "qcRNA_seq.smk")
+include: os.path.join("rules", "screen.smk")
+
+if verbose:
+    # print configuration
+    print("== Configuration:")
+    print("== run_screen: {}".format(run_screen))
+    print("== run_decontamination: {}".format(run_decontamination))
+    print("== run_qc_wgs: {}".format(run_qc_wgs))
+    print("== run_assembly: {}".format(run_assembly))
+    print("== run_qc_rna_seq: {}".format(run_qc_rna_seq))
+    print("== run_qc_mapping: {}".format(run_qc_mapping))
+    print("== run_dge_analysis: {}".format(run_dge_analysis))
+    print("== run_phylogenetic_comparison: {}".format(run_phylogenetic_comparison))
+    print("== doPolishing: {}".format(doPolishing))
+    print("== Results dir: {}".format(results_dir))
+
+# define inputs
+if doPolishing:
+    contigs = expand(os.path.join(results_dir, "polish_contigs", "{sample}_polished_contigs.fasta"), sample = assembly_samples.index)
+else:
+    if run_assembly:
+        contigs = expand(os.path.join(results_dir, "assembly", "{sample}", "{sample}_contigs.fasta"), sample=assembly_samples.index)
+    else:
+        contigs = []
+
+# Rule all
+rule all:
+    input:
+        os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],
+        os.path.join(results_dir, "qc_summary", "fastp_summary") if run_assembly else [],
+        contigs, # from assembly
+        os.path.join(results_dir, "qc_summary", "RNA-seq", "fastp_summary") if run_qc_rna_seq else [],
+        os.path.join(results_dir, "qc_summary", "RNA-seq", "qualimap_summary") if run_qc_mapping else [],
+        os.path.join(results_dir, "dge_analysis", "dge_results.tsv") if run_dge_analysis else [],
+        os.path.join(results_dir, "fasta", "genes") if run_phylogenetic_comparison else [],        
+        expand(os.path.join(results_dir, "annotation", "{sample}"), sample = assembly_samples.index) if run_assembly else [],
+        os.path.join(config["results"], "tree", "tree_plot.pdf") if run_phylogenetic_comparison else [],
