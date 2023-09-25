@@ -3,10 +3,10 @@ import pandas as pd
 import os
 from pathlib import Path
 
-# chekc if param --config-file is set and overwrite configfile
+# check if param --config-file is set and overwrite configfile
 configfile: "config/config.yaml"
 if snakemake.params.config_file != None:
-    configfile = snakemake.params.config_file
+    configfile: snakemake.params.config_file
 
 # Check if verbose is set
 verbose = config["verbose"]
@@ -63,13 +63,16 @@ else:
 
 # Rule all
 rule all:
-    input:
-        os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],
-        os.path.join(results_dir, "qc_summary", "fastp_summary") if run_assembly else [],
-        contigs, # from assembly
-        os.path.join(results_dir, "qc_summary", "RNA-seq", "fastp_summary") if run_qc_rna_seq else [],
-        os.path.join(results_dir, "qc_summary", "RNA-seq", "qualimap_summary") if run_qc_mapping else [],
-        os.path.join(results_dir, "dge_analysis", "dge_results.tsv") if run_dge_analysis else [],
-        os.path.join(results_dir, "fasta", "genes") if run_phylogenetic_comparison else [],        
-        expand(os.path.join(results_dir, "annotation", "{sample}"), sample = assembly_samples.index) if run_assembly else [],
-        os.path.join(config["results"], "tree", "tree_plot.pdf") if run_phylogenetic_comparison else [],
+    input: 
+        "output/qc/illumina_R1_fastqc.html"
+
+        
+        # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],
+        # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_assembly else [],
+        # contigs, # from assembly
+        # os.path.join(results_dir, "qc_summary", "RNA-seq", "fastp_summary") if run_qc_rna_seq else [],
+        # os.path.join(results_dir, "qc_summary", "RNA-seq", "qualimap_summary") if run_qc_mapping else [],
+        # os.path.join(results_dir, "dge_analysis", "dge_results.tsv") if run_dge_analysis else [],
+        # os.path.join(results_dir, "fasta", "genes") if run_phylogenetic_comparison else [],        
+        # expand(os.path.join(results_dir, "annotation", "{sample}"), sample = assembly_samples.index) if run_assembly else [],
+        # os.path.join(config["results"], "tree", "tree_plot.pdf") if run_phylogenetic_comparison else [],
