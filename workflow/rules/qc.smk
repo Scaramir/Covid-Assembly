@@ -3,8 +3,8 @@
 # Rule for FastQC on Illumina samples
 rule fastqc_illumina:
     input:
-        R1 = "SARSCoV2-illumina.R1.fastq.gz",
-        R2 = "SARSCoV2-illumina.R2.fastq.gz"
+        R1 = config["illumina"]["R1"],
+        R2 = config["illumina"]["R2"]
     output:
         html1 = "output/qc/illumina_R1_fastqc.html",
         html2 = "output/qc/illumina_R2_fastqc.html"
@@ -14,15 +14,15 @@ rule fastqc_illumina:
         "../envs/qc.yaml"
     shell:
         """
-        fastqc -t 4 {input.R1} -o output/qc 2> {log}
-        fastqc -t 4 {input.R2} -o output/qc 2> {log}
+        fastqc -t 4 {input.R1} -o output/qc 2>> {log}
+        fastqc -t 4 {input.R2} -o output/qc 2>> {log}
         """
 
 # Rule for quality trimming with fastp on Illumina samples
 rule fastp_illumina:
     input:
-        R1 = "SARSCoV2-illumina.R1.fastq.gz",
-        R2 = "SARSCoV2-illumina.R2.fastq.gz"
+        R1 = config["illumina"]["R1"],
+        R2 = config["illumina"]["R2"]
     output:
         R1 = "output/qc/clean_reads.R1.fastq.gz",
         R2 = "output/qc/clean_reads.R2.fastq.gz"
@@ -32,8 +32,8 @@ rule fastp_illumina:
         "../envs/qc.yaml"
     shell:
         """
-        fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} --thread 4 --qualified_quality_phred 20 --length_required 50 2> {log}
-        fastqc -t 2 {output.R1} {output.R2} -o output/qc 2> {log}
+        fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
+        fastqc -t 2 {output.R1} {output.R2} -o output/qc 2>> {log}
         """
 
 # Rule for NanoPlot on Nanopore samples
@@ -48,7 +48,7 @@ rule nanoplot_nanopore:
         "../envs/qc.yaml"
     shell:
         """
-        NanoPlot -t 4 --fastq {input.fastq} -o output/qc/nanoplot/raw 2> {log}
+        NanoPlot -t 4 --fastq {input.fastq} -o output/qc/nanoplot/raw 2>> {log}
         """
 
 # Rule for length filtering with Filtlong on Nanopore samples
@@ -63,6 +63,6 @@ rule filtlong_nanopore:
         "../envs/qc.yaml"
     shell:
         """
-        filtlong --min_length 800 --max_length 1400 {input.fastq} | gzip - > {output.fastq} 2> {log}
-        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o output/qc/nanoplot/clean 2> {log}
+        filtlong --min_length 800 --max_length 1400 {input.fastq} | gzip - > {output.fastq} 2>> {log}
+        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o output/qc/nanoplot/clean 2>> {log}
         """
