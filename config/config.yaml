@@ -15,7 +15,7 @@ ref: ""
 results: "results"
 
 # path to the folder containing the environment set up files
-envs: "../envs"
+envs_dir: "../envs"
 
 # ------ Parameters ----------
 # Set the parameters for the pipeline here:

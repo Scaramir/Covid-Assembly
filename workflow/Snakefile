@@ -1,13 +1,10 @@
 ## Imports:
-import pandas as pd
 import os
+import pandas as pd
 from pathlib import Path
 
-# check if param --config-file is set and overwrite configfile
-configfile: "config/config.yaml"
-if snakemake.params.config_file != None:
-    configfile: snakemake.params.config_file
-
+# check if param --config-file is set and overwrite default configfile to use another cofing
+configfile: "../config/config.yaml" if not snakemake.config["configfile"] else snakemake.config["configfile"]
 # Check if verbose is set
 verbose = config["verbose"]
 
@@ -43,23 +40,21 @@ benchmark_dir.mkdir(parents=True, exist_ok=True)
 log_dir = Path(results_dir / "logs")
 log_dir.mkdir(parents=True, exist_ok=True)
 
+# Load illumina samples by scanning the directory for fastq files and use the sample name as index column and the file path as calues in the dataframe, differentiationg between R1 and R2
+def dir_to_sample_df(dir, pairwise):
+    pass    
+
+
+
+# illumina_samples_df = pd.read_csv(illumina_samples, sep="\t", header=0, index_col=0)
+
+
 
 # Include rule files:
 include: os.path.join("rules", "screen.smk")
 include: os.path.join("rules", "qc.smk")
 include: os.path.join("rules", "mapping.smk")
 include: os.path.join("rules", "variant_calling.smk")
-
-
-
-# define inputs
-if doPolishing:
-    contigs = expand(os.path.join(results_dir, "polish_contigs", "{sample}_polished_contigs.fasta"), sample = assembly_samples.index)
-else:
-    if run_assembly:
-        contigs = expand(os.path.join(results_dir, "assembly", "{sample}", "{sample}_contigs.fasta"), sample=assembly_samples.index)
-    else:
-        contigs = []
 
 # Rule all
 rule all:
