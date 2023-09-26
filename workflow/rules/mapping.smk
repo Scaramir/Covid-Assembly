@@ -10,6 +10,8 @@ rule minimap2_illumina:
         "results/log/mapping/minimap2-illumina.log"
     conda:
         "../envs/mapping.yaml"
+    benchmark:
+        benchmark_dir / "mapping" / "minimap2-illumina.txt"
     shell:
         """
         minimap2 -x sr -t 4 -a -o {output} {input.ref} {input.R1} {input.R2} 2>> {log}
@@ -26,6 +28,8 @@ rule minimap2_nanopore:
         "results/log/mapping/minimap2-nanopore.log"
     conda:
         "../envs/mapping.yaml"
+    benchmark:
+        benchmark_dir / "mapping" / "minimap2-nanopore.txt"
     shell:
         """
         minimap2 -x map-ont -t 4 -a -o {output} {input.ref} {input.fastq} 2>> {log}
@@ -42,6 +46,8 @@ rule process_sam_to_bam:
         "results/log/mapping/{sample}_sam_processing.log"
     conda:
         "../envs/mapping.yaml"
+    benchmark:
+        benchmark_dir / "mapping" / "{sample}_sam_processing.txt"
     shell:
         """
         samtools view -bS {input.sam} | samtools sort -o {output.bam}

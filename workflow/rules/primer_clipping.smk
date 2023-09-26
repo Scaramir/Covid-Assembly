@@ -33,6 +33,8 @@ rule check_and_correct_bed:
         bedpe_corrected = "data/primer_scheme/corrected-{primer_sequence}"
     log:
         "results/log/primer_clipping/check_correct_bed_{primer_sequence}.log"
+    benchmark: 
+        benchmark_dir / "primer_clipping" / "check_correct_bed_{primer_sequence}.txt"
     shell:
         r"""
         # Debug: Print the first line of the reference and BED file
@@ -62,10 +64,6 @@ rule check_and_correct_bed:
         fi
         """
 
-
-
-
-
 # Rule for primer clipping on Illumina samples using BAMclipper
 rule bamclipper_illumina:
     input:
@@ -77,6 +75,8 @@ rule bamclipper_illumina:
         "results/log/primer_clipping/illumina_bamclipper.log"
     conda:
         "../envs/primer_clipping.yaml"
+    benchmark: 
+        benchmark_dir / "primer_clipping" / "illumina_bamclipper.txt"
     shell:
         """
         bamclipper.sh -b {input.bam} -p {input.bedpe} -n 4 -o {output.bam} 2>> {log}
@@ -93,6 +93,8 @@ rule bamclipper_nanopore:
         "results/log/primer_clipping/nanopore_bamclipper.log"
     conda:
         "../envs/primer_clipping.yaml"
+    benchmark:
+        benchmark_dir / "primer_clipping" / "nanopore_bamclipper.txt"
     shell:
         """
         bamclipper.sh -b {input.bam} -p {input.bedpe} -n 4 -o {output.bam} 2>> {log}

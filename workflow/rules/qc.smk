@@ -13,6 +13,8 @@ rule fastqc_illumina:
         "results/log/qc/illumina_fastqc.log"
     conda:
         "../envs/qc.yaml"
+    benchmark:
+        benchmark_dir / "qc" / "fastqc_illumina.txt"
     shell:
         """
         fastqc -t 4 {input.R1} -o output/qc 2>> {log}
@@ -32,6 +34,8 @@ rule fastp_illumina:
         "results/log/qc/illumina_fastp.log"
     conda:
         "../envs/qc.yaml"
+    benchmark:
+        benchmark_dir / "qc" / "fastp_illumina.txt"
     shell:
         """
         fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} -h output/qc/fastp.html --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
@@ -47,6 +51,8 @@ rule nanoplot_nanopore:
         "results/log/qc/nanoplot.log"
     conda:
         "../envs/qc.yaml"
+    benchmark:
+        benchmark_dir / "qc" / "nanoplot_nanopore.txt"
     shell:
         """
         NanoPlot -t 4 --fastq {input.fastq} -o output/qc/nanoplot/raw 2>> {log}
@@ -62,8 +68,28 @@ rule filtlong_nanopore:
         "results/log/qc/filtlong.log"
     conda:
         "../envs/qc.yaml"
+    benchmark:
+        benchmark_dir / "qc" / "filtlong_nanopore.txt"
     shell:
         """
         filtlong --min_length 800 --max_length 1400 {input.fastq} | gzip - > {output.fastq} 2>> {log}
+        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o output/qc/nanoplot/clean 2>> {log}
+        """
+
+# Rule for length filtering with Filtlong on Nanopore samples
+rule fastpfilter_nanopore:
+    input:
+        fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
+    output:
+        fastq = "output/qc/clean_reads_nanopore.fastq.gz"
+    log:
+        "results/log/qc/filtlong.log"
+    conda:
+        "../envs/qc.yaml"
+    benchmark:
+        benchmark_dir / "qc" / "fastp_nanopore.txt"
+    shell:
+        """
+        fastp -i {input.fastq} -o {output.fastq} -h results/qc/fastp.html --length_required 800 --length_limit 1400 2>> {log}
         NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o output/qc/nanoplot/clean 2>> {log}
         """

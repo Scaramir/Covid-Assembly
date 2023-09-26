@@ -10,6 +10,8 @@ rule generate_consensus:
         "results/log/consensus/{sample}_consensus.log"
     conda:
         "../envs/consensus.yaml"
+    benchmark: 
+        benchmark_dir / "consensus.txt"
     shell:
         """
         bcftools consensus -f {input.ref} {input.vcf} -o {output.fasta} 2>> {log}
@@ -27,6 +29,8 @@ rule compress_index_vcf:
         "results/log/consensus/{sample}_compress_index.log"
     conda:
         "../envs/consensus.yaml"
+    benchmark: 
+        benchmark_dir / "compress_index.txt"
     shell:
         """
         bgzip -f {input.vcf}
