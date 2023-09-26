@@ -29,6 +29,9 @@ tar -xzvf data/sc2-nanopore-illumina-reads.tar.gz -C data/
 # Reference data
 wget --no-check-certificate https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2?report=fasta -O data/reference.fasta
 
+# primer scheme folder
+mkdir data/primer_scheme
+
 # Illumina
 # Download the primer BED scheme for Cleanplex scheme that was used
 wget --no-check-certificate https://osf.io/4nztj/download -O data/primer_scheme/cleanplex.amplicons.bedpe
