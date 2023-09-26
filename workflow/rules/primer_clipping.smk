@@ -1,5 +1,6 @@
-# #coronavirusWuhan
-# # Rule for checking and correcting the BED file for both Illumina and Nanopore samples
+# TODO: für präsentation nanopore bedpe wird angepasst und nicht Illumina wie in hands-on
+# TODO: the rule migth need to be adjusted for other files
+# Rule for checking and correcting the BED file for both Illumina and Nanopore samples
 rule check_and_correct_bed:
     input:
         ref = reference_genome,
@@ -12,23 +13,12 @@ rule check_and_correct_bed:
         benchmark_dir / "primer_clipping" / "check_correct_bed_{primer_sequence}.txt"
     shell:
         r"""
-        # Debug: Print the first line of the reference and BED file
-        echo "First line of Reference:" >> {log}
-        head -n 1 {input.ref} >> {log}
-
-        echo "First line of BED:" >> {log}
-        head -n 1 {input.bedpe} >> {log}
-
-        # Get the FASTA header
-        REF_HEADER=$(head -n 1 {input.ref} | sed 's/>//')
+        # Get only the ID part of the FASTA header (assuming it's the first field, separated by space)
+        REF_HEADER=$(head -n 1 {input.ref} | awk '{{print $1}}' | sed 's/>//')
         
         # Get the BED header
         BED_HEADER=$(head -n 1 {input.bedpe} | awk '{{print $1}}')
         
-        # Debug: Print the extracted headers
-        echo "Extracted REF_HEADER: $REF_HEADER" >> {log}
-        echo "Extracted BED_HEADER: $BED_HEADER" >> {log}
-
         # Check if they match
         if [ "$REF_HEADER" != "$BED_HEADER" ]; then
             echo "Headers do not match. Correcting the BED file." >> {log}
@@ -38,6 +28,7 @@ rule check_and_correct_bed:
             cp {input.bedpe} {output.bedpe_corrected}
         fi
         """
+
 
 # Rule for primer clipping on Illumina samples using BAMclipper
 rule bamclipper_illumina:
