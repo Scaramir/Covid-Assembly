@@ -5,3 +5,5 @@ channels:
   - defaults
 dependencies:
   - bamclipper=1.0.0
+  - python=3.8.17
+  - pandas=2.0.3

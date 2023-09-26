@@ -1,16 +1,46 @@
+
+tech_to_primer = {
+    'nanopore': 'nCoV-2019.bed',
+    'illumina': 'cleanplex.amplicons.bedpe'
+}
+
+rule convert_bed_to_bedpe:
+    input:
+        bed = lambda wildcards: f"data/primer_scheme/{tech_to_primer[wildcards.tech]}"
+    output:
+        bedpe = "results/primer_scheme/converted-{tech}.bedpe"
+    log:
+        "results/log/primer_clipping/convert_bed_to_bedpe_{tech}.log"
+    conda:
+        "../envs/primer_clipping.yaml"
+    shell:
+        r"""
+        # Check if the file is a BED file by checking the extension
+        if [[ "{input.bed}" == *.bed ]]; then
+            echo "Converting BED to BEDPE." >> {log}
+            python scripts/primerbed2bedpe.py {input.bed} --forward_identifier _LEFT --reverse_identifier _RIGHT -o {output.bedpe}
+        else
+            echo "File is already in BEDPE format. No conversion needed." >> {log}
+            cp {input.bed} {output.bedpe}
+        fi
+        """
+
+
+
 # TODO: für präsentation nanopore bedpe wird angepasst und nicht Illumina wie in hands-on
 # TODO: the rule migth need to be adjusted for other files
 # Rule for checking and correcting the BED file for both Illumina and Nanopore samples
 rule check_and_correct_bed:
     input:
         ref = reference_genome,
-        bedpe = "data/primer_scheme/{primer_sequence}"
+        bedpe = "results/primer_scheme/converted-{tech}.bedpe"
+        #bedpe = "data/primer_scheme/{primer_sequence}"
     output:
-        bedpe_corrected = "data/primer_scheme/corrected-{primer_sequence}"
+        bedpe_corrected = "results/primer_scheme/corrected-{tech}.bedpe"
     log:
-        "results/log/primer_clipping/check_correct_bed_{primer_sequence}.log"
+        "results/log/primer_clipping/check_correct_bed_{tech}.log"
     benchmark: 
-        benchmark_dir / "primer_clipping" / "check_correct_bed_{primer_sequence}.txt"
+        benchmark_dir / "primer_clipping" / "check_correct_bed_{tech}.txt"
     shell:
         r"""
         # Get only the ID part of the FASTA header (assuming it's the first field, separated by space)
@@ -28,40 +58,19 @@ rule check_and_correct_bed:
             cp {input.bedpe} {output.bedpe_corrected}
         fi
         """
-
-
-# Rule for primer clipping on Illumina samples using BAMclipper
-rule bamclipper_illumina:
+rule bamclipper:
     input:
-        bam = "output/mapping/minimap2-illumina.sorted.bam",
-        bedpe = "data/primer_scheme/cleanplex-corrected.amplicons.bedpe"
+        bam = "output/mapping/minimap2-{tech}.sorted.bam",
+        bedpe_corrected = "results/primer_scheme/corrected-{tech}.bedpe"
     output:
-        bam = "output/primer_clipping/illumina_clipped.bam"
+        bam = "results/primer_clipping/{tech}_clipped.bam"
     log:
-        "results/log/primer_clipping/illumina_bamclipper.log"
-    conda:
-        "../envs/primer_clipping.yaml"
-    benchmark: 
-        benchmark_dir / "primer_clipping" / "illumina_bamclipper.txt"
-    shell:
-        """
-        bamclipper.sh -b {input.bam} -p {input.bedpe} -n 4 -o {output.bam} 2>> {log}
-        """
-
-# Rule for primer clipping on Nanopore samples using BAMclipper
-rule bamclipper_nanopore:
-    input:
-        bam = "output/mapping/minimap2-nanopore.sorted.bam",
-        bedpe = "data/primer_scheme/nCoV-2019.bedpe"
-    output:
-        bam = "output/primer_clipping/nanopore_clipped.bam"
-    log:
-        "results/log/primer_clipping/nanopore_bamclipper.log"
+        "results/log/primer_clipping/{tech}_bamclipper.log"
     conda:
         "../envs/primer_clipping.yaml"
     benchmark:
-        benchmark_dir / "primer_clipping" / "nanopore_bamclipper.txt"
+        benchmark_dir / "primer_clipping" / "{tech}_bamclipper.txt"
     shell:
         """
-        bamclipper.sh -b {input.bam} -p {input.bedpe} -n 4 -o {output.bam} 2>> {log}
+        bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 -o {output.bam} 2>> {log}
         """

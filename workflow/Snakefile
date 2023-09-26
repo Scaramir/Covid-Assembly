@@ -77,6 +77,8 @@ rule all:
         "output/mapping/minimap2-nanopore.sam",
         expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
         expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"]),
-        expand("data/primer_scheme/corrected-{primer_sequence}", primer_sequence=[primer_illumina, primer_nanopore]),
-
+        expand("results/primer_scheme/converted-{tech}.bedpe", tech=config["tech"]),
+        expand("results/primer_scheme/corrected-{tech}.bedpe", tech=config["tech"]),
+        expand("results/primer_clipping/{tech}_clipped.bam", tech=config["tech"]),
+        
 # TODO: Python script to generate the Benchmarking-Plots from the output of the pipeline. Call it in rule all so everything gets executed in one go

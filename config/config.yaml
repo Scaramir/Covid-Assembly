@@ -18,8 +18,14 @@ samples:
   - minimap2-illumina
 
 # Primer sequence files
-primer_nanopore: "nCoV-2019.bed"
-primer_illumina: "cleanplex.amplicons.bedpe"
+primer_nanopore: "nCoV-2019.bed" #primer_nanopore
+primer_illumina: "cleanplex.amplicons.bedpe" #primer_illumina
+
+
+# methods
+tech:
+  - nanopore
+  - illumina
 
 
 
