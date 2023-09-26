@@ -29,6 +29,10 @@ tar -xzvf data/sc2-nanopore-illumina-reads.tar.gz -C data/
 # Reference data
 wget "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_045512.2&db=nuccore&report=fasta&retmode=text&withmarkup=on&tool=portal&log$=seqview&maxdownloadsize=1000000" -O data/NC_045512.2.fasta
 
+# Python Script to Convert bed to bedpe files
+mkdir scripts
+wget --no-check-certificate https://osf.io/3295h/download -O scripts/primerbed2bedpe.py
+
 # primer scheme folder
 mkdir data/primer_scheme
 
