@@ -1,21 +1,57 @@
-
-# Rule for checking and correcting the BED file for both Illumina and Nanopore samples
+# #coronavirusWuhan
+# # Rule for checking and correcting the BED file for both Illumina and Nanopore samples
+# rule check_and_correct_bed:
+#     input:
+#         ref = config["ref"] + "coronavirusWuhan.reference.fasta",
+#         bedpe = "data/primer_scheme/{primer_sequence}"
+#     output:
+#         bedpe_corrected = "data/primer_scheme/corrected-{primer_sequence}"
+#     log:
+#         "results/log/primer_clipping/check_correct_bed_{primer_sequence}.log"
+#     shell:
+#         r"""
+#         # Get the FASTA header
+#         REF_HEADER=$(head -n 1 {input.ref} | sed 's/>//')
+        
+#         # Get the BED header
+#         BED_HEADER=$(awk '{{print $1; exit}}' {input.bedpe})
+        
+#         # Check if they match
+#         if [ "$REF_HEADER" != "$BED_HEADER" ]; then
+#             echo "Headers do not match. Correcting the BED file." >> {log}
+#             sed "s/$BED_HEADER/$REF_HEADER/g" {input.bedpe} > {output.bedpe_corrected}
+#         else
+#             echo "Headers match. No correction needed." >> {log}
+#             cp {input.bedpe} {output.bedpe_corrected}
+#         fi
+#         """
 rule check_and_correct_bed:
     input:
         ref = config["ref"] + "reference.fasta",
-        bedpe = "data/primer_scheme/{tech}.amplicons.bedpe"
+        bedpe = "data/primer_scheme/{primer_sequence}"
     output:
-        bedpe_corrected = "data/primer_scheme/{tech}-corrected.amplicons.bedpe"
+        bedpe_corrected = "data/primer_scheme/corrected-{primer_sequence}"
     log:
-        "results/log/primer_clipping/check_correct_bed_{tech}.log"
+        "results/log/primer_clipping/check_correct_bed_{primer_sequence}.log"
     shell:
-        """
+        r"""
+        # Debug: Print the first line of the reference and BED file
+        echo "First line of Reference:" >> {log}
+        head -n 1 {input.ref} >> {log}
+
+        echo "First line of BED:" >> {log}
+        head -n 1 {input.bedpe} >> {log}
+
         # Get the FASTA header
         REF_HEADER=$(head -n 1 {input.ref} | sed 's/>//')
         
         # Get the BED header
-        BED_HEADER=$(awk '{print $1; exit}' {input.bedpe})
+        BED_HEADER=$(head -n 1 {input.bedpe} | awk '{{print $1}}')
         
+        # Debug: Print the extracted headers
+        echo "Extracted REF_HEADER: $REF_HEADER" >> {log}
+        echo "Extracted BED_HEADER: $BED_HEADER" >> {log}
+
         # Check if they match
         if [ "$REF_HEADER" != "$BED_HEADER" ]; then
             echo "Headers do not match. Correcting the BED file." >> {log}
@@ -25,6 +61,8 @@ rule check_and_correct_bed:
             cp {input.bedpe} {output.bedpe_corrected}
         fi
         """
+
+
 
 
 

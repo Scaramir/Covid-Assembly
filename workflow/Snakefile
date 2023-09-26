@@ -72,7 +72,7 @@ rule all:
         #"output/mapping/{sample}.sorted.bam"
         #expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
         #expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"])
-        "output/primer_clipping/illumina_clipped.bam"
+        expand("data/primer_scheme/corrected-{primer_sequence}", primer_sequence=config["primer_sequences"]),
 
         
         # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],

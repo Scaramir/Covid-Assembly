@@ -11,10 +11,16 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 # if not set, the reference genome will be downloaded from NCBI (NC_045512.2)
 ref: "data/"
 
-#sample name
+# sample name
 samples:
   - minimap2-nanopore
   - minimap2-illumina
+
+# Primer sequence file
+primer_sequences:
+  - "nCoV-2019.bed"
+  - "cleanplex.amplicons.bedpe"
+
 
 
 
