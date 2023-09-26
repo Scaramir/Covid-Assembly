@@ -70,9 +70,9 @@ rule all:
         #"output/mapping/minimap2-illumina.sam"
         #"output/mapping/minimap2-nanopore.sam"
         #"output/mapping/{sample}.sorted.bam"
-        expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
-        expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"])
-
+        #expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
+        #expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"])
+        "output/primer_clipping/illumina_clipped.bam"
 
         
         # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],
