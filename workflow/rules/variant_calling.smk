@@ -9,6 +9,8 @@ rule freebayes_illumina:
         "results/log/variant_calling/freebayes_illumina.log"
     conda:
         "../envs/variant_calling.yaml"
+    benchmark:
+        benchmark_dir / "variant_calling" / "freebayes_illumina.txt"
     shell:
         """
         samtools faidx {input.ref}
@@ -28,6 +30,8 @@ rule medaka_nanopore:
         "results/log/variant_calling/medaka_nanopore.log"
     conda:
         "../envs/medaka.yaml"
+    benchmark:
+        benchmark_dir / "variant_calling" / "medaka_nanopore.txt"
     shell:
         """
         medaka consensus --model r941_min_hac_g507 --threads 4 --chunk_len 800 --chunk_ovlp 400 {input.bam} medaka-nanopore.consensus.hdf 2>> {log}
