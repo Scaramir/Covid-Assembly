@@ -11,6 +11,13 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 # if not set, the reference genome will be downloaded from NCBI (NC_045512.2)
 ref: "data/"
 
+#sample name
+samples:
+  - minimap2-nanopore
+  - minimap2-illumina
+
+
+
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
 results: "results"
 
