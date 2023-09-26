@@ -81,7 +81,7 @@ rule fastpfilter_nanopore:
     input:
         fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
-        fastq = "output/qc/clean_reads_nanopore.fastq.gz"
+        fastq = "output/qc/clean_reads_fastpnanopore.fastq.gz"
     log:
         "results/log/qc/filtlong.log"
     conda:

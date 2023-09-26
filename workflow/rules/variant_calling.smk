@@ -1,7 +1,7 @@
 # Rule for variant calling on Illumina samples using freebayes
 rule freebayes_illumina:
     input:
-        ref = config["ref"] + "reference.fasta",
+        ref = reference_genome,
         bam = "output/primer_clipping/illumina_clipped.bam"
     output:
         vcf = "output/variant_calling/freebayes-illumina.vcf"
@@ -19,7 +19,7 @@ rule freebayes_illumina:
 #TODO: yaml erstellen
 rule medaka_nanopore:
     input:
-        ref = config["ref"] + "reference.fasta",
+        ref = reference_genome,
         bam = "output/primer_clipping/nanopore_clipped.bam"
     output:
         vcf = "output/variant_calling/medaka-nanopore.vcf",

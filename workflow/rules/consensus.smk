@@ -1,7 +1,7 @@
 # Rule for generating a consensus sequence from the VCF file
 rule generate_consensus:
     input:
-        ref = config["ref"] + "reference.fasta",
+        ref = reference_genome,
         vcf = "output/variant_calling/{sample}.annotate.vcf.gz",
         vcf_idx = "output/variant_calling/{sample}.annotate.vcf.gz.tbi"
     output:

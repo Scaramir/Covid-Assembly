@@ -9,17 +9,16 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 
 # path and name to the fasta file of the reference genome
 # if not set, the reference genome will be downloaded from NCBI (NC_045512.2)
-ref: "data/"
+ref: "data/reference.fasta"
 
 # sample name
 samples:
   - minimap2-nanopore
   - minimap2-illumina
 
-# Primer sequence file
-primer_sequences:
-  - "nCoV-2019.bed"
-  - "cleanplex.amplicons.bedpe"
+# Primer sequence files
+primer_nanopore: "nCoV-2019.bed"
+primer_illumina: "cleanplex.amplicons.bedpe"
 
 
 

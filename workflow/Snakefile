@@ -15,6 +15,12 @@ illumina_samples = Path(config["illumina_samples"])
 
 nanopore_sampels = Path(config["nanopore_samples"])
 
+primer_illumina = Path(config["primer_illumina"])
+
+primer_nanopore = Path(config["primer_nanopore"])
+
+reference_genome = Path(config["ref"])
+
 if not (illumina_samples.is_dir() or nanopore_sampels.is_dir()):
     raise IOError("Illumina and Nanopore samples directory does not exist! \
                 Make sure, one of the folders configures in the `cconfig.yaml` \
@@ -52,8 +58,10 @@ def dir_to_sample_df(dir: Path, pairwise: bool) -> pd.DataFrame:
     sample_df["sample"] = [Path(f).stem.split(".")[0] for f in sample_df["R1"]]
     return sample_df.set_index("sample")
 
-# illumina_samples_df = dir_to_sample_df(illumina_samples, pairwise=True)
-# nanopore_samples_df = dir_to_sample_df(nanopore_sampels, pairwise=False)
+illumina_samples_df = dir_to_sample_df(illumina_samples, pairwise=True)
+print(illumina_samples_df)
+nanopore_samples_df = dir_to_sample_df(nanopore_sampels, pairwise=False)
+print(nanopore_samples_df)
 
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
@@ -64,23 +72,11 @@ include: os.path.join("rules", "variant_calling.smk")
 # Rule all
 rule all:
     input: 
-        #"output/qc/clean_reads.R1.fastq.gz"
-        #"output/qc/nanoplot/raw/NanoPlot-report.html"
-        #"output/qc/clean_reads_nanopore.fastq.gz"
-        #"output/mapping/minimap2-illumina.sam"
-        #"output/mapping/minimap2-nanopore.sam"
-        #"output/mapping/{sample}.sorted.bam"
-        #expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
-        #expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"])
-        expand("data/primer_scheme/corrected-{primer_sequence}", primer_sequence=config["primer_sequences"]),
-
-        
-        # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_qc_wgs else [],
-        # os.path.join(results_dir, "qc_summary", "fastp_summary") if run_assembly else [],
-        # contigs, # from assembly
-        # os.path.join(results_dir, "qc_summary", "RNA-seq", "fastp_summary") if run_qc_rna_seq else [],
-        # os.path.join(results_dir, "qc_summary", "RNA-seq", "qualimap_summary") if run_qc_mapping else [],
-        # os.path.join(results_dir, "dge_analysis", "dge_results.tsv") if run_dge_analysis else [],
-        # os.path.join(results_dir, "fasta", "genes") if run_phylogenetic_comparison else [],        
-        # expand(os.path.join(results_dir, "annotation", "{sample}"), sample = assembly_samples.index) if run_assembly else [],
-        # os.path.join(config["results"], "tree", "tree_plot.pdf") if run_phylogenetic_comparison else [],
+        "output/qc/clean_reads.R1.fastq.gz",
+        "output/qc/nanoplot/raw/NanoPlot-report.html",
+        "output/qc/clean_reads_nanopore.fastq.gz",
+        "output/mapping/minimap2-illumina.sam",
+        "output/mapping/minimap2-nanopore.sam",
+        expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
+        expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"]),
+        expand("data/primer_scheme/corrected-{primer_sequence}", primer_sequence=[primer_illumina, primer_nanopore]),
