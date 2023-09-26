@@ -1,3 +1,8 @@
+# TODO: Varaint calling before consensus generation
+# https://github.com/rki-mf1/2023-SC2-Data-Science/blob/main/day-sc2-seq-and-assembly/hands-on.md#variant-calling
+
+# TODO: adjust according to this: https://github.com/rki-mf1/2023-SC2-Data-Science/blob/main/day-sc2-seq-and-assembly/hands-on.md#consensus-generation
+
 # Rule for generating a consensus sequence from the VCF file
 rule generate_consensus:
     input:
@@ -36,3 +41,8 @@ rule compress_index_vcf:
         bgzip -f {input.vcf}
         tabix -f -p vcf {output.vcf_gz} 2>> {log}
         """
+
+# TODO: use pangolin for lineage assignment/annotation
+# TODO: use president to perform QC on the consensus sequences
+# TODO: think about performing MSA on the consensus sequences and then generating 
+#       a phylogenetic tree from that MSA to see how much the sequences differ from each other

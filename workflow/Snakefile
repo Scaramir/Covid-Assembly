@@ -12,13 +12,9 @@ verbose = config["verbose"]
 
 # Check for all paths in config file if they are set or exist and set them to default if not
 illumina_samples = Path(config["illumina_samples"])
-
 nanopore_sampels = Path(config["nanopore_samples"])
-
 primer_illumina = Path(config["primer_illumina"])
-
 primer_nanopore = Path(config["primer_nanopore"])
-
 reference_genome = Path(config["ref"])
 
 if not (illumina_samples.is_dir() or nanopore_sampels.is_dir()):
@@ -42,7 +38,7 @@ if envs_dir == "" or envs_dir == None:
 # Define subdirectories
 benchmark_dir = Path(results_dir / "benchmark")
 benchmark_dir.mkdir(parents=True, exist_ok=True)
-log_dir = Path(results_dir / "logs")
+log_dir = Path(results_dir / "log")
 log_dir.mkdir(parents=True, exist_ok=True)
 
 
@@ -70,6 +66,8 @@ include: os.path.join("rules", "primer_clipping.smk")
 include: os.path.join("rules", "variant_calling.smk")
 
 # Rule all
+# TODO: adjust to use wildcards for all samples and all primer combinations in EVERY rule, so no hard-coded stuff
+# This will also lead to a nice DAG overview of the whole pipeline
 rule all:
     input: 
         "output/qc/clean_reads.R1.fastq.gz",
@@ -80,3 +78,5 @@ rule all:
         expand("output/mapping/{sample}.sorted.bam", sample=config["samples"]),
         expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"]),
         expand("data/primer_scheme/corrected-{primer_sequence}", primer_sequence=[primer_illumina, primer_nanopore]),
+
+# TODO: Python script to generate the Benchmarking-Plots from the output of the pipeline. Call it in rule all so everything gets executed in one go

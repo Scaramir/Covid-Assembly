@@ -1,5 +1,6 @@
 # #coronavirusWuhan
 # # Rule for checking and correcting the BED file for both Illumina and Nanopore samples
+# TODO: correct so it works as described here: https://github.com/rki-mf1/2023-SC2-Data-Science/blob/main/day-sc2-seq-and-assembly/hands-on.md#illumina-1
 rule check_and_correct_bed:
     input:
         ref = reference_genome,
