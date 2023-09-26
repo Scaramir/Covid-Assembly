@@ -58,12 +58,15 @@ rule check_and_correct_bed:
             cp {input.bedpe} {output.bedpe_corrected}
         fi
         """
+
+
 rule bamclipper:
     input:
         bam = "output/mapping/minimap2-{tech}.sorted.bam",
         bedpe_corrected = "results/primer_scheme/corrected-{tech}.bedpe"
     output:
-        bam = "results/primer_clipping/{tech}_clipped.bam"
+        bam = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam",
+        bai = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam.bai"
     log:
         "results/log/primer_clipping/{tech}_bamclipper.log"
     conda:
@@ -74,3 +77,4 @@ rule bamclipper:
         """
         bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 -o {output.bam} 2>> {log}
         """
+
