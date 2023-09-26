@@ -27,7 +27,7 @@ wget --no-check-certificate https://osf.io/yz4ad/download -O data/sc2-nanopore-i
 tar -xzvf data/sc2-nanopore-illumina-reads.tar.gz -C data/
 
 # Reference data
-wget --no-check-certificate https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2?report=fasta -O data/reference.fasta
+wget "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_045512.2&db=nuccore&report=fasta&retmode=text&withmarkup=on&tool=portal&log$=seqview&maxdownloadsize=1000000" -O data/NC_045512.2.fasta
 
 # primer scheme folder
 mkdir data/primer_scheme
