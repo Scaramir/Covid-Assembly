@@ -1,9 +1,8 @@
-name: consensus_env
+name: consensus
 channels:
   - bioconda
   - conda-forge
   - defaults
 dependencies:
   - bcftools=1.17
-  - tabix=1.1.2 #? oder tabixpp
-  - bgzip=1.0.8 #? oder bzip2
+  - htslib=1.17
