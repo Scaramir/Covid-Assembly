@@ -59,14 +59,15 @@ rule check_and_correct_bed:
         fi
         """
 
-
+# -o does not exist in bamclipper.sh
 rule bamclipper:
     input:
         bam = "output/mapping/minimap2-{tech}.sorted.bam",
         bedpe_corrected = "results/primer_scheme/corrected-{tech}.bedpe"
     output:
-        bam = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam",
-        bai = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam.bai"
+        test="test_{tech}.txt"
+        # bam = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam",
+        # bai = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam.bai"
     log:
         "results/log/primer_clipping/{tech}_bamclipper.log"
     conda:
@@ -75,6 +76,9 @@ rule bamclipper:
         benchmark_dir / "primer_clipping" / "{tech}_bamclipper.txt"
     shell:
         """
-        bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 -o {output.bam} 2>> {log}
+        touch {output.test}
+        bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 2>> {log}
         """
+
+# bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 -o {output.bam} 2>> {log}
 

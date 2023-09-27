@@ -79,6 +79,7 @@ rule all:
         expand("output/mapping/{sample}.sorted.bam.bai", sample=config["samples"]),
         expand("results/primer_scheme/converted-{tech}.bedpe", tech=config["tech"]),
         expand("results/primer_scheme/corrected-{tech}.bedpe", tech=config["tech"]),
-        expand("results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam", tech=config["tech"]),
+        #expand("results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam", tech=config["tech"]),
+        expand("test_{tech}.txt", tech=config["tech"]),
         
 # TODO: Python script to generate the Benchmarking-Plots from the output of the pipeline. Call it in rule all so everything gets executed in one go
