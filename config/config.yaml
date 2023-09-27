@@ -16,19 +16,10 @@ ref: "data/NC_045512.2.fasta"
 samples:
   - nanopore
   - illumina
-  # - minimap2-nanopore
-  # - minimap2-illumina
 
 # Primer sequence files
 primer_nanopore: "nCoV-2019.bed" #primer_nanopore
 primer_illumina: "cleanplex.amplicons.bedpe" #primer_illumina
-
-
-# methods
-tech:
-  - nanopore
-  - illumina
-
 
 
 
