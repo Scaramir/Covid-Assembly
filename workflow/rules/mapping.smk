@@ -38,16 +38,16 @@ rule minimap2_nanopore:
 # Rule for processing SAM files to sorted and indexed BAM
 rule process_sam_to_bam:
     input:
-        sam = "output/mapping/{sample}.sam"
+        sam = "output/mapping/minimap2-{sample}.sam"
     output:
-        bam = "output/mapping/{sample}.sorted.bam",
-        bai = "output/mapping/{sample}.sorted.bam.bai"
+        bam = "output/mapping/minimap2-{sample}.sorted.bam",
+        bai = "output/mapping/minimap2-{sample}.sorted.bam.bai"
     log:
-        "results/log/mapping/{sample}_sam_processing.log"
+        "results/log/mapping/minimap2-{sample}_sam_processing.log"
     conda:
         "../envs/mapping.yaml"
     benchmark:
-        benchmark_dir / "mapping" / "{sample}_sam_processing.txt"
+        benchmark_dir / "mapping" / "minimap2-{sample}_sam_processing.txt"
     shell:
         """
         samtools view -bS {input.sam} | samtools sort -o {output.bam}

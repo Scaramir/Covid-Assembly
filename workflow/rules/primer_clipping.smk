@@ -6,11 +6,11 @@ tech_to_primer = {
 
 rule convert_bed_to_bedpe:
     input:
-        bed = lambda wildcards: f"data/primer_scheme/{tech_to_primer[wildcards.tech]}"
+        bed = lambda wildcards: f"data/primer_scheme/{tech_to_primer[wildcards.sample]}"
     output:
-        bedpe = "results/primer_scheme/converted-{tech}.bedpe"
+        bedpe = "results/primer_scheme/converted-{sample}.bedpe"
     log:
-        "results/log/primer_clipping/convert_bed_to_bedpe_{tech}.log"
+        "results/log/primer_clipping/convert_bed_to_bedpe_{sample}.log"
     conda:
         "../envs/primer_clipping.yaml"
     shell:
@@ -33,14 +33,14 @@ rule convert_bed_to_bedpe:
 rule check_and_correct_bed:
     input:
         ref = reference_genome,
-        bedpe = "results/primer_scheme/converted-{tech}.bedpe"
+        bedpe = "results/primer_scheme/converted-{sample}.bedpe"
         #bedpe = "data/primer_scheme/{primer_sequence}"
     output:
-        bedpe_corrected = "results/primer_scheme/corrected-{tech}.bedpe"
+        bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
     log:
-        "results/log/primer_clipping/check_correct_bed_{tech}.log"
+        "results/log/primer_clipping/check_correct_bed_{sample}.log"
     benchmark: 
-        benchmark_dir / "primer_clipping" / "check_correct_bed_{tech}.txt"
+        benchmark_dir / "primer_clipping" / "check_correct_bed_{sample}.txt"
     shell:
         r"""
         # Get only the ID part of the FASTA header (assuming it's the first field, separated by space)
@@ -62,18 +62,18 @@ rule check_and_correct_bed:
 # -o does not exist in bamclipper.sh
 rule bamclipper:
     input:
-        bam = "output/mapping/minimap2-{tech}.sorted.bam",
-        bedpe_corrected = "results/primer_scheme/corrected-{tech}.bedpe"
+        bam = "output/mapping/minimap2-{sample}.sorted.bam",
+        bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
     output:
-        test="test_{tech}.txt"
-        # bam = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam",
-        # bai = "results/primer_clipping/minimap2-{tech}.sorted.primerclipped.bam.bai"
+        test="test_{sample}.txt"
+        # bam = "results/primer_clipping/minimap2-{sample}.sorted.primerclipped.bam",
+        # bai = "results/primer_clipping/minimap2-{sample}.sorted.primerclipped.bam.bai"
     log:
-        "results/log/primer_clipping/{tech}_bamclipper.log"
+        "results/log/primer_clipping/{sample}_bamclipper.log"
     conda:
         "../envs/primer_clipping.yaml"
     benchmark:
-        benchmark_dir / "primer_clipping" / "{tech}_bamclipper.txt"
+        benchmark_dir / "primer_clipping" / "{sample}_bamclipper.txt"
     shell:
         """
         touch {output.test}
