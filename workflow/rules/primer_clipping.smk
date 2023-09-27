@@ -34,7 +34,6 @@ rule check_and_correct_bed:
     input:
         ref = reference_genome,
         bedpe = "results/primer_scheme/converted-{sample}.bedpe"
-        #bedpe = "data/primer_scheme/{primer_sequence}"
     output:
         bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
     log:
@@ -65,14 +64,14 @@ rule bamclipper:
         bam = "output/mapping/minimap2-{sample}.sorted.bam",
         bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
     output:
-        bam = results_dir / "primer_clipping" / "minimap2-{tech}.sorted.primerclipped.bam",
-        bai = results_dir / "primer_clipping" / "minimap2-{tech}.sorted.primerclipped.bam.bai"
+        bam = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam",
+        bai = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam.bai"
     log:
         "results/log/primer_clipping/{sample}_bamclipper.log"
     conda:
         "../envs/primer_clipping.yaml"
     benchmark:
-        benchmark_dir / "primer_clipping" / "{tech}_bamclipper.txt"
+        benchmark_dir / "primer_clipping" / "{sample}_bamclipper.txt"
     params:
         results_dir = results_dir / "primer_clipping"
     shell:
@@ -80,6 +79,3 @@ rule bamclipper:
         bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 2>> {log}
         mv *bam* {params.results_dir}       
         """
-
-# bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 -o {output.bam} 2>> {log}
-

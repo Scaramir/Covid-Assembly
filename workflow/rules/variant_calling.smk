@@ -1,10 +1,11 @@
 # Rule for variant calling on Illumina samples using freebayes
+# first re-calulate the index for the reference FASTA with samtools
 rule freebayes_illumina:
     input:
         ref = reference_genome,
-        bam = "output/primer_clipping/illumina_clipped.bam"
+        bam = results_dir / "primer_clipping" / "minimap2-illumina.sorted.primerclipped.bam",
     output:
-        vcf = "output/variant_calling/freebayes-illumina.vcf"
+        vcf = results_dir / "variant_calling" / "freebayes-illumina.vcf"
     log:
         "results/log/variant_calling/freebayes_illumina.log"
     conda:
@@ -13,7 +14,7 @@ rule freebayes_illumina:
         benchmark_dir / "variant_calling" / "freebayes_illumina.txt"
     shell:
         """
-        samtools faidx {input.ref}
+        samtools faidx {input.ref} 
         freebayes -f {input.ref} --min-alternate-count 10 --min-alternate-fraction 0.1 --min-coverage 20 --pooled-continuous --haplotype-length -1 {input.bam} > {output.vcf} 2>> {log}
         """
 
@@ -22,10 +23,10 @@ rule freebayes_illumina:
 rule medaka_nanopore:
     input:
         ref = reference_genome,
-        bam = "output/primer_clipping/nanopore_clipped.bam"
+        bam = results_dir / "primer_clipping" / "minimap2-nanopore.sorted.primerclipped.bam",
     output:
-        vcf = "output/variant_calling/medaka-nanopore.vcf",
-        annotate_vcf = "output/variant_calling/medaka-nanopore.annotate.vcf"
+        vcf = results_dir / "variant_calling" / "medaka-nanopore.vcf",
+        annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf"
     log:
         "results/log/variant_calling/medaka_nanopore.log"
     conda:
