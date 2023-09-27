@@ -72,13 +72,13 @@ include: os.path.join("rules", "variant_calling.smk")
 # This will also lead to a nice DAG overview of the whole pipeline
 rule all:
     input: 
-        "output/qc/clean_reads.R1.fastq.gz",
-        "output/qc/nanoplot/raw/NanoPlot-report.html",
-        "output/qc/clean_reads_nanopore.fastq.gz",
-        "output/mapping/minimap2-illumina.sam",
-        "output/mapping/minimap2-nanopore.sam",
-        expand("output/mapping/minimap2-{sample}.sorted.bam", sample=config["samples"]),
-        expand("output/mapping/minimap2-{sample}.sorted.bam.bai", sample=config["samples"]),
+        results_dir / "qc/clean_reads.R1.fastq.gz",
+        results_dir / "qc/nanoplot/raw/NanoPlot-report.html",
+        results_dir / "qc/clean_reads_nanopore.fastq.gz",
+        results_dir / "mapping/minimap2-illumina.sam",
+        results_dir / "mapping/minimap2-nanopore.sam",
+        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam", sample=config["samples"]),
+        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample=config["samples"]),
         expand("results/primer_scheme/converted-{sample}.bedpe", sample=config["samples"]),
         expand("results/primer_scheme/corrected-{sample}.bedpe", sample=config["samples"]),
         expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=config["samples"]),

@@ -61,7 +61,7 @@ rule check_and_correct_bed:
 # -o does not exist in bamclipper.sh
 rule bamclipper:
     input:
-        bam = "output/mapping/minimap2-{sample}.sorted.bam",
+        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
         bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
     output:
         bam = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam",
