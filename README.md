@@ -39,6 +39,8 @@ mkdir data/primer_scheme
 # Illumina
 # Download the primer BED scheme for Cleanplex scheme that was used
 wget --no-check-certificate https://osf.io/4nztj/download -O data/primer_scheme/cleanplex.amplicons.bedpe
+# V3
+wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V3/nCoV-2019.scheme.bed -O data/primer_scheme/V3-nCoV-2019.scheme.bed
 
 # Nanopore
 # First, we download the primer BED scheme for the ARTIC V1200 scheme
