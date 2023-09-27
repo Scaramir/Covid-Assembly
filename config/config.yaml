@@ -12,16 +12,9 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 #ref: "data/reference.fasta"
 ref: "data/NC_045512.2.fasta"
 
-# sample name
-samples:
-  - nanopore
-  - illumina
-
-# Primer sequence files
-primer_nanopore: "nCoV-2019.bed" #primer_nanopore
-primer_illumina: "cleanplex.amplicons.bedpe" #primer_illumina
-
-
+# Primer sequence files for the amplicon sequencing
+primer_nanopore: "data/primer_scheme/nCoV-2019.bed" 
+primer_illumina: "data/primer_scheme/cleanplex.amplicons.bedpe" 
 
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
 results: "results"

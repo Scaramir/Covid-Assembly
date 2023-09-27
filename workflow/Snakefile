@@ -59,6 +59,27 @@ print(illumina_samples_df)
 nanopore_samples_df = dir_to_sample_df(nanopore_sampels, pairwise=False)
 print(nanopore_samples_df)
 
+
+# Rule all
+# TODO: adjust to use wildcards for all samples and all primer combinations in EVERY rule, so no hard-coded stuff
+# This will also lead to a nice DAG overview of the whole pipeline
+rule all:
+    input: 
+        expand(results_dir / "qc/{sample}_fastp.html", sample = illumina_samples_df.index),
+        expand(results_dir / "qc/nanoplot/raw/{sample}", sample = nanopore_samples_df.index),
+        expand(results_dir / "qc/{sample}_clean_reads.fastq.gz", sample = nanopore_samples_df.index),
+        expand(results_dir / "mapping/minimap2-{sample}.sam", sample = illumina_samples_df.index),
+        expand(results_dir / "mapping/minimap2-{sample}.sam", sample = nanopore_samples_df.index),
+        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = illumina_samples_df.index),
+        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = nanopore_samples_df.index),
+        expand(results_dir / "primer_scheme/converted-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+        expand(results_dir / "primer_scheme/corrected-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+        expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+        expand(results_dir / "variant_calling" / "freebayes-illumina.vcf"),
+        expand(results_dir / "variant_calling" / "medaka-nanopore.vcf"),
+        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=config["samples"]),
+        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=config["samples"]),
+        
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
 include: os.path.join("rules", "mapping.smk")
@@ -66,25 +87,3 @@ include: os.path.join("rules", "read_statistics.smk")
 include: os.path.join("rules", "primer_clipping.smk")
 include: os.path.join("rules", "variant_calling.smk")
 include: os.path.join("rules", "consensus.smk")
-
-# Rule all
-# TODO: adjust to use wildcards for all samples and all primer combinations in EVERY rule, so no hard-coded stuff
-# This will also lead to a nice DAG overview of the whole pipeline
-rule all:
-    input: 
-        results_dir / "qc/clean_reads.R1.fastq.gz",
-        results_dir / "qc/nanoplot/raw/NanoPlot-report.html",
-        results_dir / "qc/clean_reads_nanopore.fastq.gz",
-        results_dir / "mapping/minimap2-illumina.sam",
-        results_dir / "mapping/minimap2-nanopore.sam",
-        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam", sample=config["samples"]),
-        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample=config["samples"]),
-        expand("results/primer_scheme/converted-{sample}.bedpe", sample=config["samples"]),
-        expand("results/primer_scheme/corrected-{sample}.bedpe", sample=config["samples"]),
-        expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=config["samples"]),
-        expand(results_dir / "variant_calling" / "freebayes-illumina.vcf"),
-        expand(results_dir / "variant_calling" / "medaka-nanopore.vcf"),
-        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=config["samples"]),
-        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=config["samples"]),
-        
-# TODO: Python script to generate the Benchmarking-Plots from the output of the pipeline. Call it in rule all so everything gets executed in one go
