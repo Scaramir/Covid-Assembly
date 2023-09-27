@@ -72,10 +72,12 @@ rule filtlong_nanopore:
         "../envs/qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "filtlong_nanopore.txt"
+    params: 
+        outdir = results_dir / "qc/nanoplot/clean"
     shell:
         """
         filtlong --min_length 800 --max_length 1400 {input.fastq} | gzip - > {output.fastq} 2>> {log}
-        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o output/qc/nanoplot/clean 2>> {log}
+        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o {params.outdir} 2>> {log}
         """
 
 # Rule for length filtering with Filtlong on Nanopore samples
@@ -90,8 +92,10 @@ rule fastpfilter_nanopore:
         "../envs/qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "fastp_nanopore.txt"
+    params: 
+        outdir = results_dir / "qc/nanoplot/clean"
     shell:
         """
         fastp -i {input.fastq} -o {output.fastq} -h results/qc/fastp.html --length_required 800 --length_limit 1400 2>> {log}
-        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o output/qc/nanoplot/clean 2>> {log}
+        NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o {params.outdir}2>> {log}
         """
