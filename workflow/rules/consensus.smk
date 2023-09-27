@@ -1,43 +1,50 @@
+
+sample_to_vcf = {
+    'nanopore': 'medaka-nanopore.annotate.vcf',
+    'illumina': 'freebayes-illumina.vcf'
+}
+
 # Rule for compressing and indexing the VCF file
+#TODO results to resultsdir ändern
 rule compress_index_vcf:
     input:
-        annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf"
+        vcf = lambda wildcards: f"results/variant_calling/{sample_to_vcf[wildcards.sample]}"
+        # vcf = results_dir / "variant_calling" / "freebayes-illumina.vcf"
+        # annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf"
     output:
-        vcf_gz = results_dir / "consensus" / "medaka-nanopore.annotate.vcf.gz",
-        vcf_gz_tbi = results_dir / "consensus" / "medaka-nanopore.annotate.vcf.gz.tbi"
+        vcf_gz = results_dir / "consensus" / "{sample}.vcf.gz",
+        vcf_gz_tbi = results_dir / "consensus" / "{sample}.vcf.gz.tbi"
     log:
-        "results/log/consensus/medaka-nanopore_compress_index.log"
+        "results/log/consensus/{sample}_compress_index.log"
     conda:
         "../envs/consensus.yaml"
     benchmark:
-        benchmark_dir / "consensus" / "medaka-nanopore_compress_index.txt"
+        benchmark_dir / "consensus" / "{sample}_compress_index.txt"
     shell:
         """
-        bgzip -f -c {input.annotate_vcf} > {output.vcf_gz}
+        bgzip -f -c {input.vcf} > {output.vcf_gz}
         tabix -f -p vcf {output.vcf_gz} 2>> {log}
         """
 
-
-# TODO: adjust according to this: https://github.com/rki-mf1/2023-SC2-Data-Science/blob/main/day-sc2-seq-and-assembly/hands-on.md#consensus-generation
 # TODO: NC_045512.2 allgemein halten
 # Rule for generating a consensus sequence from the VCF file
 rule generate_consensus:
     input:
         ref = reference_genome,
-        vcf = results_dir / "consensus" / "medaka-nanopore.annotate.vcf.gz",
-        vcf_idx = results_dir / "consensus" / "medaka-nanopore.annotate.vcf.gz.tbi"
+        vcf = results_dir / "consensus" / "{sample}.vcf.gz",
+        vcf_idx = results_dir / "consensus" / "{sample}.vcf.gz.tbi"
     output:
-        fasta = results_dir / "consensus/medaka-nanopore_consensus.fasta"
+        fasta = results_dir / "consensus/{sample}_consensus.fasta"
     log:
-        "results/log/consensus/medaka-nanopore_consensus.log"
+        "results/log/consensus/{sample}_consensus.log"
     conda:
         "../envs/consensus.yaml"
     benchmark: 
-        benchmark_dir / "consensus.txt"
+        benchmark_dir / "{sample}_consensus.txt"
     shell:
         """
         bcftools consensus -f {input.ref} {input.vcf} -o {output.fasta} 2>> {log}
-        sed -i 's/NC_045512.2/Consensus-Nanopore/g' {output.fasta}
+        sed -i 's/NC_045512.2/Consensus-{wildcards.sample}/g' {output.fasta}
         """
 
 # TODO: use pangolin for lineage assignment/annotation
