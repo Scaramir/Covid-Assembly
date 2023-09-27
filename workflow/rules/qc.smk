@@ -7,8 +7,8 @@ rule fastqc_illumina:
         R1 = config["illumina_samples"] + "/illumina.R1.fastq.gz",
         R2 = config["illumina_samples"] + "/illumina.R2.fastq.gz"
     output:
-        html1 = "output/qc/illumina_R1_fastqc.html",
-        html2 = "output/qc/illumina_R2_fastqc.html"
+        html1 = results_dir / "qc/illumina_R1_fastqc.html",
+        html2 = results_dir / "qc/illumina_R2_fastqc.html"
     log:
         "results/log/qc/illumina_fastqc.log"
     conda:
@@ -27,9 +27,9 @@ rule fastp_illumina:
         R1 = config["illumina_samples"] + "/illumina.R1.fastq.gz",
         R2 = config["illumina_samples"] + "/illumina.R2.fastq.gz"
     output:
-        R1 = "output/qc/clean_reads.R1.fastq.gz",
-        R2 = "output/qc/clean_reads.R2.fastq.gz",
-        html = "output/qc/fastp.html"
+        R1 = results_dir / "qc/clean_reads.R1.fastq.gz",
+        R2 = results_dir / "qc/clean_reads.R2.fastq.gz",
+        html = results_dir / "qc/fastp.html"
     log:
         "results/log/qc/illumina_fastp.log"
     conda:
@@ -38,7 +38,7 @@ rule fastp_illumina:
         benchmark_dir / "qc" / "fastp_illumina.txt"
     shell:
         """
-        fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} -h output/qc/fastp.html --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
+        fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} -h {output.html} --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
         """
 
 # Rule for NanoPlot on Nanopore samples
@@ -46,16 +46,18 @@ rule nanoplot_nanopore:
     input:
         fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
-        html = "output/qc/nanoplot/raw/NanoPlot-report.html"
+        html = results_dir / "qc/nanoplot/raw/NanoPlot-report.html"
     log:
         "results/log/qc/nanoplot.log"
     conda:
         "../envs/qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "nanoplot_nanopore.txt"
+    params:
+        outdir = results_dir / "qc/nanoplot/raw"
     shell:
         """
-        NanoPlot -t 4 --fastq {input.fastq} -o output/qc/nanoplot/raw 2>> {log}
+        NanoPlot -t 4 --fastq {input.fastq} -o {params.outdir} 2>> {log}
         """
 
 # Rule for length filtering with Filtlong on Nanopore samples
@@ -63,7 +65,7 @@ rule filtlong_nanopore:
     input:
         fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
-        fastq = "output/qc/clean_reads_nanopore.fastq.gz"
+        fastq = results_dir / "qc/clean_reads_nanopore.fastq.gz"
     log:
         "results/log/qc/filtlong.log"
     conda:
@@ -81,7 +83,7 @@ rule fastpfilter_nanopore:
     input:
         fastq = config["nanopore_samples"] + "/nanopore.fastq.gz",
     output:
-        fastq = "output/qc/clean_reads_fastpnanopore.fastq.gz"
+        fastq = results_dir / "qc/clean_reads_fastpnanopore.fastq.gz"
     log:
         "results/log/qc/filtlong.log"
     conda:

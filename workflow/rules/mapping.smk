@@ -2,10 +2,10 @@
 rule minimap2_illumina:
     input:
         ref = reference_genome,
-        R1 = "output/qc/clean_reads.R1.fastq.gz",
-        R2 = "output/qc/clean_reads.R2.fastq.gz"
+        R1 = results_dir / "qc/clean_reads.R1.fastq.gz",
+        R2 = results_dir / "qc/clean_reads.R2.fastq.gz"
     output:
-        "output/mapping/minimap2-illumina.sam"
+        results_dir / "mapping/minimap2-illumina.sam"
     log:
         "results/log/mapping/minimap2-illumina.log"
     conda:
@@ -21,9 +21,9 @@ rule minimap2_illumina:
 rule minimap2_nanopore:
     input:
         ref = reference_genome,
-        fastq = "output/qc/clean_reads_nanopore.fastq.gz"
+        fastq = results_dir / "qc/clean_reads_nanopore.fastq.gz"
     output:
-        "output/mapping/minimap2-nanopore.sam"
+        results_dir / "mapping/minimap2-nanopore.sam"
     log:
         "results/log/mapping/minimap2-nanopore.log"
     conda:
@@ -38,10 +38,10 @@ rule minimap2_nanopore:
 # Rule for processing SAM files to sorted and indexed BAM
 rule process_sam_to_bam:
     input:
-        sam = "output/mapping/minimap2-{sample}.sam"
+        sam = results_dir / "mapping/minimap2-{sample}.sam"
     output:
-        bam = "output/mapping/minimap2-{sample}.sorted.bam",
-        bai = "output/mapping/minimap2-{sample}.sorted.bam.bai"
+        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
+        bai = results_dir / "mapping/minimap2-{sample}.sorted.bam.bai"
     log:
         "results/log/mapping/minimap2-{sample}_sam_processing.log"
     conda:

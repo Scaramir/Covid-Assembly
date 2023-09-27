@@ -7,10 +7,10 @@
 rule generate_consensus:
     input:
         ref = reference_genome,
-        vcf = "output/variant_calling/{sample}.annotate.vcf.gz",
-        vcf_idx = "output/variant_calling/{sample}.annotate.vcf.gz.tbi"
+        vcf = results_dir / "variant_calling/{sample}.annotate.vcf.gz",
+        vcf_idx = results_dir / "variant_calling/{sample}.annotate.vcf.gz.tbi"
     output:
-        fasta = "output/consensus/{sample}_consensus.fasta"
+        fasta = results_dir / "consensus/{sample}_consensus.fasta"
     log:
         "results/log/consensus/{sample}_consensus.log"
     conda:
@@ -26,10 +26,10 @@ rule generate_consensus:
 # Rule for compressing and indexing the VCF file
 rule compress_index_vcf:
     input:
-        vcf = "output/variant_calling/{sample}.annotate.vcf"
+        vcf = results_dir / "variant_calling/{sample}.annotate.vcf"
     output:
-        vcf_gz = "output/variant_calling/{sample}.annotate.vcf.gz",
-        vcf_gz_tbi = "output/variant_calling/{sample}.annotate.vcf.gz.tbi"
+        vcf_gz = results_dir / "variant_calling/{sample}.annotate.vcf.gz",
+        vcf_gz_tbi = results_dir / "variant_calling/{sample}.annotate.vcf.gz.tbi"
     log:
         "results/log/consensus/{sample}_compress_index.log"
     conda:

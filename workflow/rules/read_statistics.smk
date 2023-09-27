@@ -1,6 +1,6 @@
 rule samtools_flagstat:
     input:
-        bam = "output/mapping/{sample}.sorted.bam"
+        bam = results_dir / "mapping/{sample}.sorted.bam"
     output:
         txt = "results/stats/{sample}_flagstat.txt"
     log:

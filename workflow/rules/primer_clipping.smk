@@ -62,17 +62,17 @@ rule check_and_correct_bed:
 # -o does not exist in bamclipper.sh
 rule bamclipper:
     input:
-        bam = "output/mapping/minimap2-{sample}.sorted.bam",
+        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
         bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
     output:
-        bam = results_dir / "primer_clipping" / "minimap2-{tech}.sorted.primerclipped.bam",
-        bai = results_dir / "primer_clipping" / "minimap2-{tech}.sorted.primerclipped.bam.bai"
+        bam = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam",
+        bai = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam.bai"
     log:
         "results/log/primer_clipping/{sample}_bamclipper.log"
     conda:
         "../envs/primer_clipping.yaml"
     benchmark:
-        benchmark_dir / "primer_clipping" / "{tech}_bamclipper.txt"
+        benchmark_dir / "primer_clipping" / "{sample}_bamclipper.txt"
     params:
         results_dir = results_dir / "primer_clipping"
     shell:
