@@ -1,12 +1,7 @@
-
-tech_to_primer = {
-    'nanopore': 'nCoV-2019.bed',
-    'illumina': 'cleanplex.amplicons.bedpe'
-}
-
+# Convert the primer files to BEDPE format so we can use them later
 rule convert_bed_to_bedpe:
     input:
-        bed = lambda wildcards: f"data/primer_scheme/{tech_to_primer[wildcards.sample]}"
+        bed = primer_illumina if "{sample}" in illumina_samples_df.index else primer_nanopore
     output:
         bedpe = "results/primer_scheme/converted-{sample}.bedpe"
     log:

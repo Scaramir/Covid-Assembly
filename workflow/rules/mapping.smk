@@ -1,38 +1,21 @@
 # Rule for mapping Illumina samples with minimap2
+# TODO: change name of rule to gebneral minimap2 rule
 rule minimap2_illumina:
     input:
         ref = reference_genome,
-        R1 = results_dir / "qc/clean_reads.R1.fastq.gz",
-        R2 = results_dir / "qc/clean_reads.R2.fastq.gz"
+        R1 = lambda wildcards: results_dir / f"qc/{wildcards.sample}_clean_reads.R1.fastq.gz" if wildcards.sample in illumina_samples_df.index else results_dir / f"qc/{wildcards.sample}_clean_reads.fastq.gz",
+        R2 = lambda wildcards: results_dir / f"qc/{wildcards.sample}_clean_reads.R2.fastq.gz" if wildcards.sample in illumina_samples_df.index else []
     output:
-        results_dir / "mapping/minimap2-illumina.sam"
+        results_dir / "mapping/minimap2-{sample}.sam"
     log:
-        "results/log/mapping/minimap2-illumina.log"
+        results_dir / "log/mapping/minimap2-{sample}.log"
     conda:
         "../envs/mapping.yaml"
     benchmark:
-        benchmark_dir / "mapping" / "minimap2-illumina.txt"
+        benchmark_dir / "mapping" / "minimap2-{sample}.txt"
     shell:
         """
         minimap2 -x sr -t 4 -a -o {output} {input.ref} {input.R1} {input.R2} 2>> {log}
-        """
-
-# Rule for mapping Nanopore samples with minimap2
-rule minimap2_nanopore:
-    input:
-        ref = reference_genome,
-        fastq = results_dir / "qc/clean_reads_nanopore.fastq.gz"
-    output:
-        results_dir / "mapping/minimap2-nanopore.sam"
-    log:
-        "results/log/mapping/minimap2-nanopore.log"
-    conda:
-        "../envs/mapping.yaml"
-    benchmark:
-        benchmark_dir / "mapping" / "minimap2-nanopore.txt"
-    shell:
-        """
-        minimap2 -x map-ont -t 4 -a -o {output} {input.ref} {input.fastq} 2>> {log}
         """
 
 # Rule for processing SAM files to sorted and indexed BAM
