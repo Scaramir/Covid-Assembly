@@ -70,18 +70,21 @@ rule pangolin:
 # TODO: use president to perform QC on the consensus sequences
 rule president:
     input:
-        consensus = results_dir / "consensus/{sample}_consensus.fasta"
+        consensus = results_dir / "consensus/{sample}_consensus.fasta",
+        ref = reference_genome
     output:
-        qc = results_dir / "consensus/{sample}_qc.txt"
+        qc = results_dir / "qc/president/{sample}_report.tsv"
     log:
-        results_dir / "log/consensus/{sample}_qc.log"
+        results_dir / "log/qc/president/{sample}_president.log"
     conda:
         envs_dir / "lineage.yaml"
     benchmark:
-        benchmark_dir / "{sample}_qc.txt"
+        benchmark_dir / "qc/president/{sample}_president.txt"
+    params:
+        outdir = results_dir / "qc/president"
     shell:
         """
-        president qc -i {input.consensus} -o {output.qc} 2>> {log}
+        president -q {input.consensus} -r {input.ref} -x 0.9 -n 0.05 -t 4 -p {params.outdir} -f {wildcards.sample}_ 2>> {log}
         """
 
 # TODO: think about performing MSA on the consensus sequences and then generating 

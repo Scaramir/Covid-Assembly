@@ -82,7 +82,8 @@ rule all:
         expand(results_dir / "variant_calling" / "medaka-nanopore.vcf"),
         expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        results_dir / "consensus/lineage.csv"
+        results_dir / "consensus/lineage.csv",
+        expand(results_dir / "qc/president/{sample}_report.tsv", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
 
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
