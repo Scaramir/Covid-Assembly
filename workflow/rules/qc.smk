@@ -4,7 +4,8 @@
 # TODO: Does not work
 rule fastqc_illumina:
     input:
-        expand(["{R1}", "{R2}"], R1=list(illumina_samples_df.R1) + list(nanopore_samples_df.R1), R2=list(illumina_samples_df.R2) + [] * len(nanopore_samples_df))
+        # expand(["{R1}", "{R2}"], R1=list(illumina_samples_df.R1) + list(nanopore_samples_df.R1), R2=list(illumina_samples_df.R2) + [] * len(nanopore_samples_df))
+        expand(["{R1}", "{R2}"], R1=list(illumina_samples_df.R1), R2=list(illumina_samples_df.R2))
     output:
         # html = expand([results_dir / "qc/fastqc/{sample}.R{i}_fastqc.html"], sample=illumina_samples_df.index.tolist() + nanopore_samples_df.index.tolist(), i=["1","2"]),
         html = results_dir / "qc/fastqc/test.txt"

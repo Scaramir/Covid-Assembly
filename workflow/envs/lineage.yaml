@@ -1,0 +1,7 @@
+name: lineage
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - pangolin=4.3
+  - president=0.6.8
