@@ -46,6 +46,6 @@ wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/prime
 # First, we download the primer BED scheme for the ARTIC V1200 scheme
 wget --no-check-certificate https://osf.io/3ks9b/download -O data/primer_scheme/nCoV-2019.bed
 # ARTIC V4.1 primer kit
-wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4.1/SARS-CoV-2.scheme.bed -O data/primer_scheme/SARS-CoV-2.scheme.bed
+wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4.1/SARS-CoV-2.scheme.bed -O data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed
 
 ```
