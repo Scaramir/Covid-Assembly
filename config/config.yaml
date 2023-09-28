@@ -13,8 +13,8 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 ref: "data/NC_045512.2.fasta"
 
 # Primer sequence files for the amplicon sequencing
-primer_nanopore: "data/primer_scheme/nCoV-2019.bed" 
-primer_illumina: "data/primer_scheme/cleanplex.amplicons.bedpe" 
+primer_nanopore: "data/primer_scheme/V3-nCoV-2019.scheme.bed" 
+primer_illumina: "data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed" 
 
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
 results: "results"
