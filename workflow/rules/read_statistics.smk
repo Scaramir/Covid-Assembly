@@ -43,12 +43,18 @@ rule samtools_stats:
 
 rule qualimap:
     input:
-        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam"
+        bam = results_dir / "mapping" / "minimap2-{sample}.sorted.bam"
     output:
-        qualimap = results_dir / "qualimap/{sample}"
+        report = results_dir / "qualimap" / "{sample}" / "qualimapReport.html"
     conda:
-        "../envs/qualimap.yaml"
+        envs_dir / "qualimap.yaml"
+    threads:
+        4
+    log:
+        os.path.join(log_dir, "qualimap2", "qualimap2_{sample}.log")
+    params:
+        output_dir = str(results_dir / "qualimap/{sample}")
+    benchmark:
+        os.path.join(benchmark_dir, "qualimap2", "qualimap2_{sample}.txt")
     shell:
-        """
-        qualimap bamqc -bam {input.bam} -outdir {output.qualimap}
-        """
+        "qualimap bamqc -bam {input} -outdir {params.output_dir} -outformat HTML > {log} 2>&1"
