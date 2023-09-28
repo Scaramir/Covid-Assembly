@@ -48,6 +48,41 @@ rule generate_consensus:
         """
 
 # TODO: use pangolin for lineage assignment/annotation
+rule pangolin:
+    input:
+        #consensus = results_dir / "consensus/{sample}_consensus.fasta"
+        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+    output:
+        lineage = results_dir / "consensus/lineage.csv"
+    log:
+        results_dir / "log/consensus/lineage.log"
+    conda:
+        envs_dir / "lineage.yaml"
+    benchmark:
+        benchmark_dir / "lineage.txt"
+    shell:
+        """
+        cat {input} > all_consensus.fasta
+        pangolin -t 4 all_consensus.fasta --outfile {output.lineage} 2>> {log}
+        rm all_consensus.fasta
+        """
+
 # TODO: use president to perform QC on the consensus sequences
+rule president:
+    input:
+        consensus = results_dir / "consensus/{sample}_consensus.fasta"
+    output:
+        qc = results_dir / "consensus/{sample}_qc.txt"
+    log:
+        results_dir / "log/consensus/{sample}_qc.log"
+    conda:
+        envs_dir / "lineage.yaml"
+    benchmark:
+        benchmark_dir / "{sample}_qc.txt"
+    shell:
+        """
+        president qc -i {input.consensus} -o {output.qc} 2>> {log}
+        """
+
 # TODO: think about performing MSA on the consensus sequences and then generating 
 #       a phylogenetic tree from that MSA to see how much the sequences differ from each other
