@@ -26,7 +26,8 @@ rule medaka_nanopore:
         bam = results_dir / "primer_clipping" / "minimap2-nanopore.sorted.primerclipped.bam",
     output:
         vcf = results_dir / "variant_calling" / "medaka-nanopore.vcf",
-        annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf"
+        annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf",
+        outname = results_dir / "variant_calling" / "medaka-nanopore.consensus.hdf"
     log:
         "results/log/variant_calling/medaka_nanopore.log"
     conda:
@@ -35,7 +36,7 @@ rule medaka_nanopore:
         benchmark_dir / "variant_calling" / "medaka_nanopore.txt"
     shell:
         """
-        medaka consensus --model r941_min_hac_g507 --threads 4 --chunk_len 800 --chunk_ovlp 400 {input.bam} medaka-nanopore.consensus.hdf 2>> {log}
-        medaka variant {input.ref} medaka-nanopore.consensus.hdf {output.vcf} 2>> {log}
+        medaka consensus --model r941_min_hac_g507 --threads 4 --chunk_len 800 --chunk_ovlp 400 {input.bam} {output.outname} 2>> {log}
+        medaka variant {input.ref} {output.outname} {output.vcf} 2>> {log}
         medaka tools annotate {output.vcf} {input.ref} {input.bam} {output.annotate_vcf} 2>> {log}
         """

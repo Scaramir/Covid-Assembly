@@ -49,3 +49,8 @@ wget --no-check-certificate https://osf.io/3ks9b/download -O data/primer_scheme/
 wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4.1/SARS-CoV-2.scheme.bed -O data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed
 
 ```
+
+To perform quality control using FastQC, just run snakemake like this: 
+```bash
+snakemake --cores 8 --use-conda -p fastqc_illumina
+```

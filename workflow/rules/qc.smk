@@ -4,22 +4,25 @@
 # TODO: Does not work
 rule fastqc_illumina:
     input:
-        R1 = config["illumina_samples"] + "/illumina.R1.fastq.gz",
-        R2 = config["illumina_samples"] + "/illumina.R2.fastq.gz"
+        expand(["{R1}", "{R2}"], R1=list(illumina_samples_df.R1) + list(nanopore_samples_df.R1), R2=list(illumina_samples_df.R2) + [] * len(nanopore_samples_df))
     output:
-        html1 = results_dir / "qc/illumina_R1_fastqc.html",
-        html2 = results_dir / "qc/illumina_R2_fastqc.html"
+        # html = expand([results_dir / "qc/fastqc/{sample}.R{i}_fastqc.html"], sample=illumina_samples_df.index.tolist() + nanopore_samples_df.index.tolist(), i=["1","2"]),
+        html = results_dir / "qc/fastqc/test.txt"
     log:
         "results/log/qc/illumina_fastqc.log"
     conda:
         "../envs/qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "fastqc_illumina.txt"
+    params:
+        outdir = results_dir / "qc" / "fastqc"
     shell:
         """
-        fastqc -t 4 {input.R1} -o output/qc 2>> {log}
-        fastqc -t 4 {input.R2} -o output/qc 2>> {log}
+        mkdir -p {params.outdir}
+        fastqc --quiet -t 4 {input} -o {params.outdir} 2> {log}
+        touch {output.html}
         """
+
 
 # Rule for quality trimming with fastp on Illumina samples
 rule fastp_illumina:
