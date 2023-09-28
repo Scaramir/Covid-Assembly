@@ -2,7 +2,7 @@
 # How many reads where aligned? What’s the read quality?
 rule samtools_flagstat:
     input:
-        bam = "output/mapping/minimap2-{sample}.sorted.bam"
+        bam = "results/mapping/minimap2-{sample}.sorted.bam"
     output:
         txt = "results/stats/minimap2-{sample}_flagstat.txt"
     log:
@@ -40,3 +40,15 @@ rule samtools_stats:
 #         """
 #         plot-bamstats -p results/stats/{wildcards.sample}_ {input.txt}
 #         """
+
+rule qualimap:
+    input:
+        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam"
+    output:
+        qualimap = results_dir / "qualimap/{sample}"
+    conda:
+        "../envs/qualimap.yaml"
+    shell:
+        """
+        qualimap bamqc -bam {input.bam} -outdir {output.qualimap}
+        """

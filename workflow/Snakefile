@@ -19,7 +19,7 @@ reference_genome = Path(config["ref"])
 
 if not (illumina_samples.is_dir() or nanopore_sampels.is_dir()):
     raise IOError("Illumina and Nanopore samples directory does not exist! \
-                Make sure, one of the folders configures in the `cconfig.yaml` \
+                Make sure, one of the folders configures in the `config.yaml` \
                 file exists and contains samples!")
 
 results_dir = Path(config["results"])
@@ -72,14 +72,18 @@ rule all:
         expand(results_dir / "mapping/minimap2-{sample}.sam", sample = nanopore_samples_df.index),
         expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = illumina_samples_df.index),
         expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = nanopore_samples_df.index),
+        #statistics
+        expand("results/stats/minimap2-{sample}_flagstat.txt", sample = illumina_samples_df.index),
+        #expand(results_dir / "qualimap/{sample}", sample = illumina_samples_df.index),
         expand(results_dir / "primer_scheme/converted-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "primer_scheme/corrected-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "variant_calling" / "freebayes-illumina.vcf"),
         expand(results_dir / "variant_calling" / "medaka-nanopore.vcf"),
-        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=config["samples"]),
-        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=config["samples"]),
-        
+        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+
+      
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
 include: os.path.join("rules", "mapping.smk")
