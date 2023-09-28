@@ -2,11 +2,20 @@
 #### Project 2 from SC2 @ FUB
 #### Jule Brenningmeyer, Maximilian Otto
 
-Let's put our code and resulting plots and slides here.
+This repository contains a workflow to assemble the SARS-CoV-2 genome from Illumina and Nanopore data. The workflow is based on Snakemake and uses Conda to manage the software dependencies.  
+Besides assembling the genomes of the sample files, the workflow also performs quality control on the raw reads as well as on the assembled consensus sequences.  
+To perform the assembly on both sequencing technologies, it is required, that the Illumina data is paired-end and the Nanopore data is single-end amplicon data. Additionally, the Illumina data needs to be demultiplexed and the Nanopore data needs to be basecalled.  
+NOTE: "illumina" or "nanopore" should be included in the corresponding file names.   
+The workflow is designed to be run on a Linux system with an active conda environment in which `snakemake` is installed. 
 
-And make use of a .gitignore to only upload code :)
+## Workflow
+The workflow consists of the following rules:
 
-## Environment
+![Workflow](snakemake_rules_workflow_graphviz.png)
+
+
+## Usage
+### Environment
 
 ```bash
 
@@ -16,7 +25,7 @@ git clone https://github.com/Scaramir/Covid-Assembly.git
 cd Covid-Assembly/
 ```
 
-## Data
+### Data
 
 ```bash
 
@@ -37,18 +46,22 @@ wget --no-check-certificate https://osf.io/3295h/download -O scripts/primerbed2b
 mkdir data/primer_scheme
 
 # Illumina
-# Download the primer BED scheme for Cleanplex scheme that was used
-wget --no-check-certificate https://osf.io/4nztj/download -O data/primer_scheme/cleanplex.amplicons.bedpe
+# Download the primer BED scheme
 # V3
 wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V3/nCoV-2019.scheme.bed -O data/primer_scheme/V3-nCoV-2019.scheme.bed
 
 # Nanopore
-# First, we download the primer BED scheme for the ARTIC V1200 scheme
-wget --no-check-certificate https://osf.io/3ks9b/download -O data/primer_scheme/nCoV-2019.bed
+# First, we download the primer BED scheme
 # ARTIC V4.1 primer kit
 wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4.1/SARS-CoV-2.scheme.bed -O data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed
 
 ```
+
+To run the workflow, you need to have `snakemake` installed.
+```bash
+snakemake --cores 8 --use-conda
+```
+Set cores to the maximum number of threads you want to use. Most jobs use 4 threads, so 8 cores should be fine.
 
 To perform quality control using FastQC, just run snakemake like this: 
 ```bash
