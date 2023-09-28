@@ -77,8 +77,8 @@ rule all:
         expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "variant_calling" / "freebayes-illumina.vcf"),
         expand(results_dir / "variant_calling" / "medaka-nanopore.vcf"),
-        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=config["samples"]),
-        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=config["samples"]),
+        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         
 # Include rule files:
 include: os.path.join("rules", "qc.smk")
