@@ -73,8 +73,8 @@ rule all:
         expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = illumina_samples_df.index),
         expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = nanopore_samples_df.index),
         #statistics
-        expand("results/stats/minimap2-{sample}_flagstat.txt", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        expand(results_dir / "qualimap/{sample}", sample = illumina_samples_df.index),
+        expand("results/stats/minimap2-{sample}_flagstat.txt", sample = illumina_samples_df.index),
+        expand(results_dir / "qualimap/{sample}/qualimapReport.html", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "primer_scheme/converted-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "primer_scheme/corrected-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
         expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),

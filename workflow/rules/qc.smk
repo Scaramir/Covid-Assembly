@@ -75,7 +75,7 @@ rule filtlong_nanopore:
     benchmark:
         benchmark_dir / "qc" / "{sample}_filtlong.txt"
     params: 
-        outdir = results_dir / "qc/nanoplot/clean/{sample}"
+        outdir = str(results_dir / "qc/nanoplot/clean/{sample}")
     shell:
         """
         filtlong --min_length 400 --max_length 700 {input.fastq} | gzip - > {output.fastq} 2>> {log}
