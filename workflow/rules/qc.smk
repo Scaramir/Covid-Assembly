@@ -78,7 +78,7 @@ rule filtlong_nanopore:
         outdir = results_dir / "qc/nanoplot/clean/{sample}"
     shell:
         """
-        filtlong --min_length 800 --max_length 1400 {input.fastq} | gzip - > {output.fastq} 2>> {log}
+        filtlong --min_length 400 --max_length 700 {input.fastq} | gzip - > {output.fastq} 2>> {log}
         NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o {params.outdir} 2>> {log}
         """
 
@@ -100,6 +100,6 @@ rule fastpfilter_nanopore:
         outdir = results_dir / "qc/nanoplot/clean/{sample}"
     shell:
         """
-        fastp -i {input.fastq} -o {output.fastq} -h {output.html} --length_required 800 --length_limit 1400 2>> {log}
+        fastp -i {input.fastq} -o {output.fastq} -h {output.html} --length_required 400 --length_limit 700 2>> {log}
         NanoPlot -t 4 --fastq {output.fastq} --title "Filtered reads" --color darkslategrey --N50 --loglength -o {params.outdir} 2>> {log}
         """

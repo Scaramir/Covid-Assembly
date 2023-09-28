@@ -71,6 +71,6 @@ rule bamclipper:
         results_dir = results_dir / "primer_clipping"
     shell:
         """
-        bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 4 2>> {log}
+        bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 8 2>> {log}
         mv *bam* {params.results_dir}       
         """
