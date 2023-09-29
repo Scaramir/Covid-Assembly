@@ -26,6 +26,7 @@ rule compress_index_vcf:
         """
 
 # Rule for generating a consensus sequence from the VCF file
+# TODO: use a different parameter or tool for nanopore samples
 rule generate_consensus:
     input:
         ref = reference_genome,

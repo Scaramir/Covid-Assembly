@@ -56,7 +56,7 @@ wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/prime
 wget https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4.1/SARS-CoV-2.scheme.bed -O data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed
 
 # ! ATTENTION ! remove the files starting with "._" from the data folder
-rm data/**/._*
+rm data/*/**/._*
 
 ```
 
