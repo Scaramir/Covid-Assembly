@@ -3,11 +3,11 @@ rule convert_bed_to_bedpe:
     input:
         bed = primer_illumina if "{sample}" in illumina_samples_df.index else primer_nanopore
     output:
-        bedpe = "results/primer_scheme/converted-{sample}.bedpe"
+        bedpe = results_dir / "primer_scheme/converted-{sample}.bedpe"
     log:
-        "results/log/primer_clipping/convert_bed_to_bedpe_{sample}.log"
+        results_dir / "log/primer_clipping/convert_bed_to_bedpe_{sample}.log"
     conda:
-        "../envs/primer_clipping.yaml"
+        envs_dir / "primer_clipping.yaml"
     shell:
         r"""
         # Check if the file is a BED file by checking the extension
@@ -20,19 +20,15 @@ rule convert_bed_to_bedpe:
         fi
         """
 
-
-
-# TODO: für präsentation nanopore bedpe wird angepasst und nicht Illumina wie in hands-on
-# TODO: the rule migth need to be adjusted for other files
 # Rule for checking and correcting the BED file for both Illumina and Nanopore samples
 rule check_and_correct_bed:
     input:
         ref = reference_genome,
-        bedpe = "results/primer_scheme/converted-{sample}.bedpe"
+        bedpe = results_dir / "primer_scheme/converted-{sample}.bedpe"
     output:
-        bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
+        bedpe_corrected = results_dir / "primer_scheme/corrected-{sample}.bedpe"
     log:
-        "results/log/primer_clipping/check_correct_bed_{sample}.log"
+        results_dir / "log/primer_clipping/check_correct_bed_{sample}.log"
     benchmark: 
         benchmark_dir / "primer_clipping" / "check_correct_bed_{sample}.txt"
     shell:
@@ -57,14 +53,14 @@ rule check_and_correct_bed:
 rule bamclipper:
     input:
         bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
-        bedpe_corrected = "results/primer_scheme/corrected-{sample}.bedpe"
+        bedpe_corrected = results_dir / "primer_scheme/corrected-{sample}.bedpe"
     output:
         bam = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam",
         bai = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam.bai"
     log:
-        "results/log/primer_clipping/{sample}_bamclipper.log"
+        results_dir / "log/primer_clipping/{sample}_bamclipper.log"
     conda:
-        "../envs/primer_clipping.yaml"
+        envs_dir / "primer_clipping.yaml"
     benchmark:
         benchmark_dir / "primer_clipping" / "{sample}_bamclipper.txt"
     params:

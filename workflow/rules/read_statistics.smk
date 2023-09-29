@@ -2,13 +2,13 @@
 # How many reads where aligned? What’s the read quality?
 rule samtools_flagstat:
     input:
-        bam = "results/mapping/minimap2-{sample}.sorted.bam"
+        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam"
     output:
-        txt = "results/stats/minimap2-{sample}_flagstat.txt"
+        txt = results_dir / "stats/minimap2-{sample}_flagstat.txt"
     log:
-        "results/log/stats/minimap2-{sample}_flagstat.log"
+        results_dir / "log/stats/minimap2-{sample}_flagstat.log"
     conda:
-        "../envs/mapping.yaml"
+        envs_dir / "mapping.yaml"
     shell:
         """
         samtools flagstat {input.bam} > {output.txt} 2>> {log}
@@ -19,28 +19,16 @@ rule samtools_stats:
     input:
         bam = "output/mapping/minimap2-{sample}.sorted.bam"
     output:
-        txt = "results/stats/minimap2-{sample}_stats.txt"
+        txt = results_dir / "stats/minimap2-{sample}_stats.txt"
     log:
-        "results/log/stats/minimap2-{sample}_stats.log"
+        results_dir / "log/stats/minimap2-{sample}_stats.log"
     conda:
-        "../envs/mapping.yaml"
+        envs_dir / "mapping.yaml"
     shell:
         """
         samtools stats {input.bam} > {output.txt} 2>> {log}
         """
-# Pot Read length distribution
-# rule plot_bamstats:
-#     input:
-#         txt = "results/stats/minimap2-{sample}_stats.txt"
-#     output:
-#         png = "results/stats/minimap2-{sample}_length_distribution.png"
-#     conda:
-#         "../envs/mapping.yaml"
-#     shell:
-#         """
-#         plot-bamstats -p results/stats/{wildcards.sample}_ {input.txt}
-#         """
-
+# Qualimap2 report (HTML)
 rule qualimap:
     input:
         bam = results_dir / "mapping" / "minimap2-{sample}.sorted.bam"

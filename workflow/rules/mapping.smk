@@ -1,6 +1,5 @@
 # Rule for mapping Illumina samples with minimap2
-# TODO: change name of rule to gebneral minimap2 rule
-rule minimap2_illumina:
+rule minimap2:
     input:
         ref = reference_genome,
         R1 = lambda wildcards: results_dir / f"qc/{wildcards.sample}_clean_reads.R1.fastq.gz" if wildcards.sample in illumina_samples_df.index else results_dir / f"qc/{wildcards.sample}_clean_reads.fastq.gz",
@@ -10,7 +9,7 @@ rule minimap2_illumina:
     log:
         results_dir / "log/mapping/minimap2-{sample}.log"
     conda:
-        "../envs/mapping.yaml"
+        envs_dir / "mapping.yaml"
     benchmark:
         benchmark_dir / "mapping" / "minimap2-{sample}.txt"
     shell:
@@ -26,9 +25,9 @@ rule process_sam_to_bam:
         bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
         bai = results_dir / "mapping/minimap2-{sample}.sorted.bam.bai"
     log:
-        "results/log/mapping/minimap2-{sample}_sam_processing.log"
+        results_dir / "log/mapping/minimap2-{sample}_sam_processing.log"
     conda:
-        "../envs/mapping.yaml"
+        envs_dir / "mapping.yaml"
     benchmark:
         benchmark_dir / "mapping" / "minimap2-{sample}_sam_processing.txt"
     shell:

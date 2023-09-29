@@ -7,9 +7,9 @@ rule freebayes_illumina:
     output:
         vcf = results_dir / "variant_calling" / "freebayes-illumina.vcf"
     log:
-        "results/log/variant_calling/freebayes_illumina.log"
+        results_dir / "log/variant_calling/freebayes_illumina.log"
     conda:
-        "../envs/variant_calling.yaml"
+        envs_dir / "variant_calling.yaml"
     benchmark:
         benchmark_dir / "variant_calling" / "freebayes_illumina.txt"
     shell:
@@ -19,7 +19,6 @@ rule freebayes_illumina:
         """
 
 # Rule for variant calling on Nanopore samples using Medaka
-#TODO: yaml erstellen
 rule medaka_nanopore:
     input:
         ref = reference_genome,
@@ -29,9 +28,9 @@ rule medaka_nanopore:
         annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf",
         outname = results_dir / "variant_calling" / "medaka-nanopore.consensus.hdf"
     log:
-        "results/log/variant_calling/medaka_nanopore.log"
+        results_dir / "log/variant_calling/medaka_nanopore.log"
     conda:
-        "../envs/medaka.yaml"
+        envs_dir / "medaka.yaml"
     benchmark:
         benchmark_dir / "variant_calling" / "medaka_nanopore.txt"
     shell:

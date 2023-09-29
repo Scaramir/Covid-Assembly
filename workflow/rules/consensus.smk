@@ -5,19 +5,18 @@ sample_to_vcf = {
 }
 
 # Rule for compressing and indexing the VCF file
-#TODO results to resultsdir ändern
 rule compress_index_vcf:
     input:
-        vcf = lambda wildcards: f"results/variant_calling/{sample_to_vcf[wildcards.sample]}"
+        vcf = lambda wildcards: results_dir / f"variant_calling/{sample_to_vcf[wildcards.sample]}"
         # vcf = results_dir / "variant_calling" / "freebayes-illumina.vcf"
         # annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf"
     output:
         vcf_gz = results_dir / "consensus" / "{sample}.vcf.gz",
         vcf_gz_tbi = results_dir / "consensus" / "{sample}.vcf.gz.tbi"
     log:
-        "results/log/consensus/{sample}_compress_index.log"
+        results_dir / "log/consensus/{sample}_compress_index.log"
     conda:
-        "../envs/consensus.yaml"
+        envs_dir / "consensus.yaml"
     benchmark:
         benchmark_dir / "consensus" / "{sample}_compress_index.txt"
     shell:
@@ -26,7 +25,6 @@ rule compress_index_vcf:
         tabix -f -p vcf {output.vcf_gz} 2>> {log}
         """
 
-# TODO: NC_045512.2 allgemein halten
 # Rule for generating a consensus sequence from the VCF file
 rule generate_consensus:
     input:
@@ -36,9 +34,9 @@ rule generate_consensus:
     output:
         fasta = results_dir / "consensus/{sample}_consensus.fasta"
     log:
-        "results/log/consensus/{sample}_consensus.log"
+        results_dir / "log/consensus/{sample}_consensus.log"
     conda:
-        "../envs/consensus.yaml"
+        envs_dir / "consensus.yaml"
     benchmark: 
         benchmark_dir / "{sample}_consensus.txt"
     shell:
@@ -47,7 +45,7 @@ rule generate_consensus:
         sed -i 's/NC_045512.2/Consensus-{wildcards.sample}/g' {output.fasta}
         """
 
-# TODO: use pangolin for lineage assignment/annotation
+# Pangolin for lineage assignment/annotation
 rule pangolin:
     input:
         #consensus = results_dir / "consensus/{sample}_consensus.fasta"
@@ -67,7 +65,7 @@ rule pangolin:
         rm all_consensus.fasta
         """
 
-# TODO: use president to perform QC on the consensus sequences
+# President to perform QC on the consensus sequences
 rule president:
     input:
         consensus = results_dir / "consensus/{sample}_consensus.fasta",
@@ -89,3 +87,4 @@ rule president:
 
 # TODO: think about performing MSA on the consensus sequences and then generating 
 #       a phylogenetic tree from that MSA to see how much the sequences differ from each other
+# TODO: Read the `outlook` slides of the presentation for even more ideas for further improvements
