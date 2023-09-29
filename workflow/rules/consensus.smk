@@ -27,6 +27,7 @@ rule compress_index_vcf:
         """
 
 # TODO: NC_045512.2 allgemein halten
+# TODO: use a different tool then bcftools for nanopore samples
 # Rule for generating a consensus sequence from the VCF file
 rule generate_consensus:
     input:
