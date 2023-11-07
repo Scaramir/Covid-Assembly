@@ -3,10 +3,11 @@
 # Rule for FastQC on Illumina samples
 rule fastqc_illumina:
     input:
-        # The commented line is for use with illumina + nanopore samples
+        # The following line would be for use with illumina + nanopore samples
         # expand(["{R1}", "{R2}"], R1=list(illumina_samples_df.R1) + list(nanopore_samples_df.R1), R2=list(illumina_samples_df.R2) + [] * len(nanopore_samples_df))
         expand(["{R1}", "{R2}"], R1=list(illumina_samples_df.R1), R2=list(illumina_samples_df.R2))
     output:
+        # The following line would be for use with illumina + nanopore samples
         # html = expand([results_dir / "qc/fastqc/{sample}.R{i}_fastqc.html"], sample=illumina_samples_df.index.tolist() + nanopore_samples_df.index.tolist(), i=["1","2"]),
         html = results_dir / "qc/fastqc/test.txt"
     log:
@@ -15,6 +16,8 @@ rule fastqc_illumina:
         envs_dir / "qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "fastqc_illumina.txt"
+    threads: 
+        config["num_threads"]
     params:
         outdir = results_dir / "qc" / "fastqc"
     shell:
@@ -40,6 +43,8 @@ rule fastp_illumina:
         envs_dir / "qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "{sample}_fastp_illumina.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} -h {output.html} -j {output.json} --thread 4 --qualified_quality_phred 20 --length_required 50 2>> {log}
@@ -57,6 +62,8 @@ rule nanoplot_nanopore:
         envs_dir / "qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "{sample}_nanoplot.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         NanoPlot -t 4 --fastq {input.fastq} -o {output} 2>> {log}
@@ -74,6 +81,8 @@ rule filtlong_nanopore:
         envs_dir / "qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "{sample}_filtlong.txt"
+    threads: 
+        config["num_threads"]
     params: 
         outdir = str(results_dir / "qc/nanoplot/clean/{sample}")
     shell:
@@ -95,6 +104,8 @@ rule fastpfilter_nanopore:
         envs_dir / "qc.yaml"
     benchmark:
         benchmark_dir / "qc" / "{sample}_fastp_nanopore.txt"
+    threads: 
+        config["num_threads"]        
     params: 
         outdir = results_dir / "qc/nanoplot/clean/{sample}"
     shell:

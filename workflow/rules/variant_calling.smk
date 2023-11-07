@@ -12,6 +12,8 @@ rule freebayes_illumina:
         envs_dir / "variant_calling.yaml"
     benchmark:
         benchmark_dir / "variant_calling" / "freebayes_illumina.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         samtools faidx {input.ref} 
@@ -33,6 +35,8 @@ rule medaka_nanopore:
         envs_dir / "medaka.yaml"
     benchmark:
         benchmark_dir / "variant_calling" / "medaka_nanopore.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         medaka consensus --model r941_min_hac_g507 --threads 4 --chunk_len 800 --chunk_ovlp 400 {input.bam} {output.outname} 2>> {log}

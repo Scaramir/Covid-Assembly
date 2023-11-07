@@ -9,6 +9,10 @@ rule samtools_flagstat:
         results_dir / "log/stats/minimap2-{sample}_flagstat.log"
     conda:
         envs_dir / "mapping.yaml"
+    benchmark:
+        os.path.join(benchmark_dir, "samtools_flagstat", "samtools_flagstat_{sample}.txt")
+    threads: 
+        config["num_threads"]
     shell:
         """
         samtools flagstat {input.bam} > {output.txt} 2>> {log}
@@ -24,10 +28,15 @@ rule samtools_stats:
         results_dir / "log/stats/minimap2-{sample}_stats.log"
     conda:
         envs_dir / "mapping.yaml"
+    benchmark:
+        os.path.join(benchmark_dir, "samtools_stats", "samtools_stats_{sample}.txt")
+    threads: 
+        config["num_threads"]
     shell:
         """
         samtools stats {input.bam} > {output.txt} 2>> {log}
         """
+
 # Qualimap2 report (HTML)
 rule qualimap:
     input:
@@ -44,5 +53,7 @@ rule qualimap:
         output_dir = str(results_dir / "qualimap/{sample}")
     benchmark:
         os.path.join(benchmark_dir, "qualimap2", "qualimap2_{sample}.txt")
+    threads: 
+        config["num_threads"]        
     shell:
-        "qualimap bamqc -bam {input} -outdir {params.output_dir} -outformat HTML > {log} 2>&1"
+        "qualimap bamqc -bam {input.bam} -outdir {params.output_dir} -outformat HTML > {log} 2>&1"

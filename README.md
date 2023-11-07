@@ -60,13 +60,15 @@ rm data/*/**/._*
 
 ```
 
-To run the workflow, you need to have `snakemake` installed.
+To run the workflow, you need to have `snakemake` installed and the environment active.
+
 ```bash
-snakemake --cores 8 --use-conda
+snakemake --cores 16 --use-conda
 ```
-Set cores to the maximum number of threads you want to use. Most jobs use 4 threads, so 8 cores should be fine.
+
+Set cores to the maximum number of threads you want to use. Most jobs use 4 threads, so  cores should be fine.
 
 To perform quality control using FastQC, just run snakemake like this: 
 ```bash
-snakemake --cores 8 --use-conda -p fastqc_illumina
+snakemake --cores 16 --use-conda -p fastqc_illumina
 ```

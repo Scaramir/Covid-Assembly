@@ -12,6 +12,8 @@ rule minimap2:
         envs_dir / "mapping.yaml"
     benchmark:
         benchmark_dir / "mapping" / "minimap2-{sample}.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         minimap2 -x sr -t 4 -a -o {output} {input.ref} {input.R1} {input.R2} 2>> {log}
@@ -30,6 +32,8 @@ rule process_sam_to_bam:
         envs_dir / "mapping.yaml"
     benchmark:
         benchmark_dir / "mapping" / "minimap2-{sample}_sam_processing.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         samtools view -bS {input.sam} | samtools sort -o {output.bam}

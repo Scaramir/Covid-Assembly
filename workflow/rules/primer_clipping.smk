@@ -8,12 +8,14 @@ rule convert_bed_to_bedpe:
         results_dir / "log/primer_clipping/convert_bed_to_bedpe_{sample}.log"
     conda:
         envs_dir / "primer_clipping.yaml"
+    threads: 
+        config["num_threads"]
     shell:
         r"""
         # Check if the file is a BED file by checking the extension
         if [[ "{input.bed}" == *.bed ]]; then
             echo "Converting BED to BEDPE." >> {log}
-            python scripts/primerbed2bedpe.py {input.bed} --forward_identifier _LEFT --reverse_identifier _RIGHT -o {output.bedpe}
+            python workflow/scripts/primerbed2bedpe.py {input.bed} --forward_identifier _LEFT --reverse_identifier _RIGHT -o {output.bedpe}
         else
             echo "File is already in BEDPE format. No conversion needed." >> {log}
             cp {input.bed} {output.bedpe}
@@ -31,6 +33,7 @@ rule check_and_correct_bed:
         results_dir / "log/primer_clipping/check_correct_bed_{sample}.log"
     benchmark: 
         benchmark_dir / "primer_clipping" / "check_correct_bed_{sample}.txt"
+    threads: 1
     shell:
         r"""
         # Get only the ID part of the FASTA header (assuming it's the first field, separated by space)
@@ -49,7 +52,7 @@ rule check_and_correct_bed:
         fi
         """
 
-# -o does not exist in bamclipper.sh
+# Clip the primers from the BAM file
 rule bamclipper:
     input:
         bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
@@ -65,8 +68,10 @@ rule bamclipper:
         benchmark_dir / "primer_clipping" / "{sample}_bamclipper.txt"
     params:
         results_dir = results_dir / "primer_clipping"
+    threads: 
+        config["num_threads"]
     shell:
         """
         bamclipper.sh -b {input.bam} -p {input.bedpe_corrected} -n 8 2>> {log}
-        mv *bam* {params.results_dir}       
+        mv *bam* {params.results_dir} # -o does not exist in bamclipper.sh       
         """

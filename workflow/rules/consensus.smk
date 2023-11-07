@@ -1,4 +1,6 @@
-
+# Dict of samples and their corresponding fastq files
+# TODO: generate this dict according to the file names, or better: 
+#       Use a dynamic input, depending just on smth like "*{sample}.annotate.vcf". For this, rename the output of freebayes to include ".annotate.vcf"
 sample_to_vcf = {
     'nanopore': 'medaka-nanopore.annotate.vcf',
     'illumina': 'freebayes-illumina.vcf'
@@ -8,8 +10,6 @@ sample_to_vcf = {
 rule compress_index_vcf:
     input:
         vcf = lambda wildcards: results_dir / f"variant_calling/{sample_to_vcf[wildcards.sample]}"
-        # vcf = results_dir / "variant_calling" / "freebayes-illumina.vcf"
-        # annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf"
     output:
         vcf_gz = results_dir / "consensus" / "{sample}.vcf.gz",
         vcf_gz_tbi = results_dir / "consensus" / "{sample}.vcf.gz.tbi"
@@ -19,6 +19,8 @@ rule compress_index_vcf:
         envs_dir / "consensus.yaml"
     benchmark:
         benchmark_dir / "consensus" / "{sample}_compress_index.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         bgzip -f -c {input.vcf} > {output.vcf_gz}
@@ -26,7 +28,6 @@ rule compress_index_vcf:
         """
 
 # Rule for generating a consensus sequence from the VCF file
-# TODO: use a different parameter or tool for nanopore samples
 rule generate_consensus:
     input:
         ref = reference_genome,
@@ -40,6 +41,8 @@ rule generate_consensus:
         envs_dir / "consensus.yaml"
     benchmark: 
         benchmark_dir / "{sample}_consensus.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         bcftools consensus -f {input.ref} {input.vcf} -o {output.fasta} 2>> {log}
@@ -49,7 +52,6 @@ rule generate_consensus:
 # Pangolin for lineage assignment/annotation
 rule pangolin:
     input:
-        #consensus = results_dir / "consensus/{sample}_consensus.fasta"
         expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
     output:
         lineage = results_dir / "consensus/lineage.csv"
@@ -59,6 +61,8 @@ rule pangolin:
         envs_dir / "lineage.yaml"
     benchmark:
         benchmark_dir / "lineage.txt"
+    threads: 
+        config["num_threads"]
     shell:
         """
         cat {input} > all_consensus.fasta
@@ -79,6 +83,8 @@ rule president:
         envs_dir / "lineage.yaml"
     benchmark:
         benchmark_dir / "qc/president/{sample}_president.txt"
+    threads: 
+        config["num_threads"]
     params:
         outdir = results_dir / "qc/president"
     shell:
