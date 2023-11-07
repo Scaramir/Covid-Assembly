@@ -5,8 +5,8 @@
 This repository contains a workflow to assemble the SARS-CoV-2 genome from Illumina and Nanopore data. The workflow is based on Snakemake and uses Conda to manage the software dependencies.  
 Besides assembling the genomes of the sample files, the workflow also performs quality control on the raw reads as well as on the assembled consensus sequences.  
 To perform the assembly on both sequencing technologies, it is required, that the Illumina data is paired-end and the Nanopore data is single-end amplicon data. Additionally, the Illumina data needs to be demultiplexed and the Nanopore data needs to be basecalled.  
-NOTE: "illumina" or "nanopore" should be included in the corresponding file names.   
-The workflow is designed to be run on a Linux system with an active conda environment in which `snakemake` is installed. 
+NOTE: "illumina" or "nanopore" should be included in the corresponding file names. The file naming convention this script is built upon can be derived from the example data set.    
+The workflow is designed to be run on a Linux system with an active conda environment in which `snakemake` is installed and activated (`conda activate snakemake`).
 
 ## Workflow
 The workflow consists of the following rules:
@@ -25,7 +25,7 @@ git clone https://github.com/Scaramir/Covid-Assembly.git
 cd Covid-Assembly/
 ```
 
-### Data
+### Example Data
 
 ```bash
 
@@ -60,15 +60,15 @@ rm data/*/**/._*
 
 ```
 
-To run the workflow, you need to have `snakemake` installed and the environment active.
-
+### Run
+To run the workflow, you need to have `snakemake` installed and activate before you can execute it like so:
 ```bash
 snakemake --cores 16 --use-conda
 ```
+Set `cores` to the maximum number of threads you want to Snakemake to distribute jobs to.   
+Most jobs use 4 threads, so 16 cores should be fine.
 
-Set cores to the maximum number of threads you want to use. Most jobs use 4 threads, so  cores should be fine.
-
-To perform quality control using FastQC, just run snakemake like this: 
+To perform quality control using FastQC for Illumina data, additional to fastp,just run snakemake like this: 
 ```bash
 snakemake --cores 16 --use-conda -p fastqc_illumina
 ```
