@@ -43,7 +43,16 @@ log_dir.mkdir(parents=True, exist_ok=True)
 
 
 def dir_to_sample_df(dir: Path, pairwise: bool) -> pd.DataFrame:
-# Load illumina samples by scanning the directory for fastq files and use the sample name as index column and the file path as values in the dataframe, differentiating between R1 and R2
+    '''
+    Load illumina samples by scanning the directory for fastq files and use the sample name as index column and the file path as values in the dataframe, differentiating between R1 and R2
+
+    Args:
+    dir (Path): Path to directory containing fastq files
+    pairwise (bool): If True, differentiate between R1 and R2 files
+
+    Returns:
+    pd.DataFrame: DataFrame with sample names as index and file paths as values
+    '''
     list_of_files: List[Path] = [f for f in dir.glob("*.fastq.gz") if f.is_file()]
     sample_df: pd.DataFrame = pd.DataFrame()
     if pairwise:
@@ -55,34 +64,16 @@ def dir_to_sample_df(dir: Path, pairwise: bool) -> pd.DataFrame:
     return sample_df.set_index("sample")
 
 illumina_samples_df = dir_to_sample_df(illumina_samples, pairwise=True)
-print(illumina_samples_df)
 nanopore_samples_df = dir_to_sample_df(nanopore_sampels, pairwise=False)
-print(nanopore_samples_df)
 
 
-# Rule all
-# TODO: adjust to use wildcards for all samples and all primer combinations in EVERY rule, so no hard-coded stuff
-# This will also lead to a nice DAG overview of the whole pipeline
+# Rule all:
 rule all:
     input: 
-        expand(results_dir / "qc/{sample}_fastp.html", sample = illumina_samples_df.index),
-        expand(results_dir / "qc/nanoplot/raw/{sample}", sample = nanopore_samples_df.index),
-        expand(results_dir / "qc/{sample}_clean_reads.fastq.gz", sample = nanopore_samples_df.index),
-        expand(results_dir / "mapping/minimap2-{sample}.sam", sample = illumina_samples_df.index),
-        expand(results_dir / "mapping/minimap2-{sample}.sam", sample = nanopore_samples_df.index),
-        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = illumina_samples_df.index),
-        expand(results_dir / "mapping/minimap2-{sample}.sorted.bam.bai", sample = nanopore_samples_df.index),
-        expand(results_dir / "stats/minimap2-{sample}_flagstat.txt", sample = illumina_samples_df.index),
-        expand(results_dir / "qualimap/{sample}/qualimapReport.html", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        expand(results_dir / "primer_scheme/converted-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        expand(results_dir / "primer_scheme/corrected-{sample}.bedpe", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        expand(results_dir / "primer_clipping/minimap2-{sample}.sorted.primerclipped.bam", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        expand(results_dir / "variant_calling" / "freebayes-illumina.vcf"),
-        expand(results_dir / "variant_calling" / "medaka-nanopore.vcf"),
-        expand(results_dir / "consensus" / "{sample}.vcf.gz", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
-        results_dir / "consensus/lineage.csv",
-        expand(results_dir / "qc/president/{sample}_report.tsv", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
+        expand(results_dir / "qualimap/{sample}/qualimapReport.html", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),  # keep
+        expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),     # keep
+        results_dir / "consensus/lineage.csv",                                                                                                  # keep
+        expand(results_dir / "qc/president/{sample}_report.tsv", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),       # keep
 
 # Include rule files:
 include: os.path.join("rules", "qc.smk")

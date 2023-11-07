@@ -13,8 +13,8 @@ nanopore_samples: "data/sc2-nanopore-illumina-reads/nanopore"
 ref: "data/NC_045512.2.fasta"
 
 # Primer sequence files for the amplicon sequencing
-primer_nanopore: "data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed" #"data/primer_scheme/nCoV-2019.bed" 
-primer_illumina: "data/primer_scheme/V3-nCoV-2019.scheme.bed"  #"data/primer_scheme/cleanplex.amplicons.bedpe" 
+primer_nanopore: "data/primer_scheme/V4.1-SARS-CoV-2.scheme.bed"  #"data/primer_scheme/nCoV-2019.bed" 
+primer_illumina: "data/primer_scheme/V3-nCoV-2019.scheme.bed"     #"data/primer_scheme/cleanplex.amplicons.bedpe" 
 
 # path for all the results (including all processed data, e.g. BAMs, logs, etc. )
 results: "results"
@@ -23,48 +23,8 @@ results: "results"
 envs_dir: "../envs"
 
 # ------ Parameters ----------
-# Set the parameters for the pipeline here:
-run_decontamination: False
-run_qc_wgs: True
-run_qc_mapping: True
-run_assembly: True
-run_dge_analysis: True
-run_phylogenetic_comparison: True
-
 # Set this to true to get debug information:
 verbose: True
 
 # Set this to the max. number of threads you want to use for a job:
-threads: 8
-
-# --- De Novo Assembly ---
-# Decontamination / Kraken2:
-# To obtian possible contaminations in the reads, we use kraken2 to classify the reads
-# and then filter out all reads that are classified as host genome or as contaminations
-# just run this first to obtain the contamination report:
-# ```snakemake --use-conda --cores 10 screen```  
-# If you already have a contamination fasta file, specify it here, so the reads will be filtered out according to this file.
-# host_genome: "data/reference/contamination_file.fa"
-host_genome: ""
-
-# extra params for kraken2 (value between 0 and 1, default: 0.5)
-kraken_confidence: 0.5
-
-# path to kraken2 database
-database: "data/kraken_database"
-
-# Parameters for spades (True or False, default: True)
-spades_isolate: True
-
-# set this to `true` of `false` to enable or disable the polishing step
-run_Polishing: False
-
-# --- Calculate Consensus ---
-# The minimum depth required to make a call. Defaults to 1. 
-# Failing this depth check will produce consensus "N", or absent if it is an insertion. 
-# Note this check is performed after filtering by flags and mapping/base quality.
-min_depth: 10
-
-# The percentage of "N" bases allowed within a gene. 
-# NOTE: Every gene with more than this percentage of "N" bases will be discarded in all samples before performing a Multiple Sequence Alignment.
-max_N: 10
+num_threads: 4
