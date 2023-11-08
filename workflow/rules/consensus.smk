@@ -36,7 +36,7 @@ rule generate_consensus:
     output:
         fasta = results_dir / "consensus/{sample}_consensus.fasta"
     log:
-        results_dir / "log/consensus/{sample}_consensus.log"
+        results_dir / "log" / "consensus" / "{sample}_consensus.log"
     conda:
         envs_dir / "consensus.yaml"
     benchmark: 
@@ -54,9 +54,9 @@ rule pangolin:
     input:
         expand(results_dir / "consensus/{sample}_consensus.fasta", sample=list(illumina_samples_df.index)+list(nanopore_samples_df.index)),
     output:
-        lineage = results_dir / "consensus/lineage.csv"
+        lineage = results_dir / "consensus" / "lineage.csv"
     log:
-        results_dir / "log/consensus/lineage.log"
+        results_dir / "log" / "consensus" / "lineage.log"
     conda:
         envs_dir / "lineage.yaml"
     benchmark:
@@ -76,17 +76,17 @@ rule president:
         consensus = results_dir / "consensus/{sample}_consensus.fasta",
         ref = reference_genome
     output:
-        qc = results_dir / "qc/president/{sample}_report.tsv"
+        qc = results_dir / "qc" / "president" / {sample}_report.tsv"
     log:
-        results_dir / "log/qc/president/{sample}_president.log"
+        results_dir / "log/qc" / "president" / {sample}_president.log"
     conda:
         envs_dir / "lineage.yaml"
     benchmark:
-        benchmark_dir / "qc/president/{sample}_president.txt"
+        benchmark_dir / "qc" / "president" / {sample}_president.txt"
     threads: 
         config["num_threads"]
     params:
-        outdir = results_dir / "qc/president"
+        outdir = results_dir / "qc" / "president"
     shell:
         """
         president -q {input.consensus} -r {input.ref} -x 0.9 -n 0.05 -t 4 -p {params.outdir} -f {wildcards.sample}_ 2>> {log}

@@ -1,5 +1,6 @@
 # Rule for variant calling on Illumina samples using freebayes
-# first re-calulate the index for the reference FASTA with samtools
+# first re-calulate the index for the reference FASTA with 
+# TODO: use wildcards in both of the following rules ! Variant calling should be done on all samples and work generalized! 
 rule freebayes_illumina:
     input:
         ref = reference_genome,
@@ -7,7 +8,7 @@ rule freebayes_illumina:
     output:
         vcf = results_dir / "variant_calling" / "freebayes-illumina.vcf"
     log:
-        results_dir / "log/variant_calling/freebayes_illumina.log"
+        results_dir / "log" / "variant_calling" / "freebayes_illumina.log"
     conda:
         envs_dir / "variant_calling.yaml"
     benchmark:
@@ -30,7 +31,7 @@ rule medaka_nanopore:
         annotate_vcf = results_dir / "variant_calling" / "medaka-nanopore.annotate.vcf",
         outname = results_dir / "variant_calling" / "medaka-nanopore.consensus.hdf"
     log:
-        results_dir / "log/variant_calling/medaka_nanopore.log"
+        results_dir / "log" / "variant_calling" / "medaka_nanopore.log"
     conda:
         envs_dir / "medaka.yaml"
     benchmark:
@@ -39,7 +40,7 @@ rule medaka_nanopore:
         config["num_threads"]
     shell:
         """
-        medaka consensus --model r941_min_hac_g507 --threads 4 --chunk_len 800 --chunk_ovlp 400 {input.bam} {output.outname} 2>> {log}
+        medaka consensus --model r941_min_hac_g507 --threads {threads} --chunk_len 800 --chunk_ovlp 400 {input.bam} {output.outname} 2>> {log}
         medaka variant {input.ref} {output.outname} {output.vcf} 2>> {log}
         medaka tools annotate {output.vcf} {input.ref} {input.bam} {output.annotate_vcf} 2>> {log}
         """

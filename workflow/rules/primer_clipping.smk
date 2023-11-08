@@ -55,13 +55,13 @@ rule check_and_correct_bed:
 # Clip the primers from the BAM file
 rule bamclipper:
     input:
-        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam",
-        bedpe_corrected = results_dir / "primer_scheme/corrected-{sample}.bedpe"
+        bam = results_dir / "mapping" / "minimap2-{sample}.sorted.bam",
+        bedpe_corrected = results_dir / "primer_scheme" / "corrected-{sample}.bedpe"
     output:
         bam = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam",
         bai = results_dir / "primer_clipping" / "minimap2-{sample}.sorted.primerclipped.bam.bai"
     log:
-        results_dir / "log/primer_clipping/{sample}_bamclipper.log"
+        results_dir / "log" / "primer_clipping" / "{sample}_bamclipper.log"
     conda:
         envs_dir / "primer_clipping.yaml"
     benchmark:

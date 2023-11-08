@@ -9,9 +9,9 @@ rule fastqc_illumina:
     output:
         # The following line would be for use with illumina + nanopore samples
         # html = expand([results_dir / "qc/fastqc/{sample}.R{i}_fastqc.html"], sample=illumina_samples_df.index.tolist() + nanopore_samples_df.index.tolist(), i=["1","2"]),
-        html = results_dir / "qc/fastqc/test.txt"
+        html = results_dir / "qc" / "fastqc" / "test.txt"
     log:
-        results_dir / "log/qc/illumina_fastqc.log"
+        results_dir / "log" / "qc" / "illumina_fastqc.log"
     conda:
         envs_dir / "qc.yaml"
     benchmark:
@@ -33,12 +33,12 @@ rule fastp_illumina:
         R1 = lambda wildcards: [illumina_samples_df.at[wildcards.sample, "R1"]],
         R2 = lambda wildcards: [illumina_samples_df.at[wildcards.sample, "R2"]]
     output:
-        R1 = results_dir / "qc/{sample}_clean_reads.R1.fastq.gz",
-        R2 = results_dir / "qc/{sample}_clean_reads.R2.fastq.gz",
-        html = results_dir / "qc/{sample}_fastp.html",
-        json = results_dir / "qc/{sample}_fastp.json"
+        R1 = results_dir / "qc" / "{sample}_clean_reads.R1.fastq.gz",
+        R2 = results_dir / "qc" / "{sample}_clean_reads.R2.fastq.gz",
+        html = results_dir / "qc" / "{sample}_fastp.html",
+        json = results_dir / "qc" / "{sample}_fastp.json"
     log:
-        results_dir / "log/qc/{sample}_illumina_fastp.log"
+        results_dir / "log" / "qc" / "{sample}_illumina_fastp.log"
     conda:
         envs_dir / "qc.yaml"
     benchmark:
@@ -55,9 +55,9 @@ rule nanoplot_nanopore:
     input:
         fastq = lambda wildcards: [nanopore_samples_df.at[wildcards.sample, "R1"]]
     output:
-        directory(results_dir / "qc/nanoplot/raw/{sample}")
+        directory(results_dir / "qc" / "nanoplot" / "raw" / "{sample}")
     log:
-        results_dir / "log/qc/{sample}_nanoplot.log"
+        results_dir / "log" / "qc" / "{sample}_nanoplot.log"
     conda:
         envs_dir / "qc.yaml"
     benchmark:
@@ -74,9 +74,9 @@ rule filtlong_nanopore:
     input:
         fastq = lambda wildcards: [nanopore_samples_df.at[wildcards.sample, "R1"]]
     output:
-        fastq = results_dir / "qc/{sample}_clean_reads.fastq.gz"
+        fastq = results_dir / "qc" / "{sample}_clean_reads.fastq.gz"
     log:
-        results_dir / "log/qc/{sample}_filtlong.log"
+        results_dir / "log" / "qc" / "{sample}_filtlong.log"
     conda:
         envs_dir / "qc.yaml"
     benchmark:
@@ -84,7 +84,7 @@ rule filtlong_nanopore:
     threads: 
         config["num_threads"]
     params: 
-        outdir = str(results_dir / "qc/nanoplot/clean/{sample}")
+        outdir = str(results_dir / "qc" / "nanoplot" / "clean" / "{sample}")
     shell:
         """
         filtlong --min_length 400 --max_length 700 {input.fastq} | gzip - > {output.fastq} 2>> {log}
@@ -96,10 +96,10 @@ rule fastpfilter_nanopore:
     input:
         fastq = lambda wildcards: [nanopore_samples_df.at[wildcards.sample, "R1"]]
     output:
-        fastq = results_dir / "qc/{sample}_clean_reads_fastpnanopore.fastq.gz",
-        html = results_dir / "qc/{sample}_fastp.html"
+        fastq = results_dir / "qc" / {sample}_clean_reads_fastpnanopore.fastq.gz",
+        html = results_dir / "qc" / {sample}_fastp.html"
     log:
-        results_dir / "log/qc/{sample}_fastpfilter.log"
+        results_dir / "log" / "qc" / {sample}_fastpfilter.log"
     conda:
         envs_dir / "qc.yaml"
     benchmark:
@@ -107,7 +107,7 @@ rule fastpfilter_nanopore:
     threads: 
         config["num_threads"]        
     params: 
-        outdir = results_dir / "qc/nanoplot/clean/{sample}"
+        outdir = results_dir / "qc" / "nanoplot" / "clean" / "{sample}"
     shell:
         """
         fastp -i {input.fastq} -o {output.fastq} -h {output.html} --length_required 400 --length_limit 700 2>> {log}

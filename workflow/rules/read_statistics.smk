@@ -2,11 +2,11 @@
 # How many reads where aligned? What’s the read quality?
 rule samtools_flagstat:
     input:
-        bam = results_dir / "mapping/minimap2-{sample}.sorted.bam"
+        bam = results_dir / "mapping" / "minimap2-{sample}.sorted.bam"
     output:
-        txt = results_dir / "stats/minimap2-{sample}_flagstat.txt"
+        txt = results_dir / "stats" / "minimap2-{sample}_flagstat.txt"
     log:
-        results_dir / "log/stats/minimap2-{sample}_flagstat.log"
+        results_dir / "log" / "stats" / "minimap2-{sample}_flagstat.log"
     conda:
         envs_dir / "mapping.yaml"
     benchmark:
@@ -21,11 +21,11 @@ rule samtools_flagstat:
 # Read length distribution
 rule samtools_stats:
     input:
-        bam = "output/mapping/minimap2-{sample}.sorted.bam"
+        bam = "output" / "mapping" / "minimap2-{sample}.sorted.bam"
     output:
-        txt = results_dir / "stats/minimap2-{sample}_stats.txt"
+        txt = results_dir / "stats" / "minimap2-{sample}_stats.txt"
     log:
-        results_dir / "log/stats/minimap2-{sample}_stats.log"
+        results_dir / "log" / "stats" / "minimap2-{sample}_stats.log"
     conda:
         envs_dir / "mapping.yaml"
     benchmark:
