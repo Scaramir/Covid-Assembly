@@ -6,7 +6,9 @@ This repository contains a workflow to assemble the SARS-CoV-2 genome from Illum
 Besides assembling the genomes of the sample files, the workflow also performs quality control on the raw reads as well as on the assembled consensus sequences.  
 To perform the assembly on both sequencing technologies, it is required, that the Illumina data is paired-end and the Nanopore data is single-end amplicon data. Additionally, the Illumina data needs to be demultiplexed and the Nanopore data needs to be basecalled.  
 NOTE: "illumina" or "nanopore" should be included in the corresponding file names. The file naming convention this script is built upon can be derived from the example data set.    
-The workflow is designed to be run on a Linux system with an active conda environment in which `snakemake` is installed and activated (`conda activate snakemake`).
+The workflow is designed to be run on a Linux system with an active conda environment in which `snakemake` is installed and activated (`conda activate snakemake`).  
+
+The presentation, including the results, can be found [here](https://docs.google.com/presentation/d/139hQzr9hJuHUSIcze_c5MqbzL4uuP447vb-4YYWZpiE/edit?usp=sharing).
 
 ## Workflow
 The workflow consists of the following rules:
