@@ -1,8 +1,11 @@
+[![DOI](https://zenodo.org/badge/694811233.svg)](https://doi.org/10.5281/zenodo.15020719)
+
 # Project 2 - SARS-CoV-2 genome assembly from Illumina & Nanopore data
 #### Project 2 from SC2 @ FUB
 #### Jule Brenningmeyer, Maximilian Otto
 
-This repository contains a workflow to assemble the SARS-CoV-2 genome from Illumina and Nanopore data. The workflow is based on Snakemake and uses Conda to manage the software dependencies.  
+This repository contains a workflow to assemble the SARS-CoV-2 genome from Illumina and Nanopore data and finally compares the assembly quality between the two techniques.   
+The workflow is based on Snakemake and uses Conda to manage the software dependencies.  
 Besides assembling the genomes of the sample files, the workflow also performs quality control on the raw reads as well as on the assembled consensus sequences.  
 To perform the assembly on both sequencing technologies, it is required, that the Illumina data is paired-end and the Nanopore data is single-end amplicon data. Additionally, the Illumina data needs to be demultiplexed and the Nanopore data needs to be basecalled.  
 NOTE: "illumina" or "nanopore" should be included in the corresponding file names. The file naming convention this script is built upon can be derived from the example data set.    
